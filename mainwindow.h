@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <Projects/projectswindow.h>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,5 +19,10 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    ProjectsWindow* projectsWindow;
+
+private slots:
+    void openProjectsWindow();
 };
 #endif // MAINWINDOW_H
