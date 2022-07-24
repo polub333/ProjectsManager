@@ -29,6 +29,8 @@ void ProjectsWindow::showProjectInfo()
 {
     showProjectNameInfo();
     showProjectDateInfo();
+    showProjectWorkInfo();
+    showProjectRewardInfo();
 }
 
 void ProjectsWindow::showProjectNameInfo()
@@ -66,6 +68,37 @@ void ProjectsWindow::showProjectDateInfo()
     QString daysRemaining = QString::number((*selectedProjectIt)->getDaysRemaining());
     ui->daysGoneLabel->setText(daysGone);
     ui->daysRemainingLabel->setText(daysRemaining);
+}
+
+void ProjectsWindow::showProjectWorkInfo()
+{
+    ui->workAmountLabel->setText(QString::number((*selectedProjectIt)->getWorkAmount()));
+    ui->workDoneLabel->setText(QString::number((*selectedProjectIt)->getWorkDone()));
+    ui->workRemainingLabel->setText(QString::number((*selectedProjectIt)->getWorkRemaining()));
+    ui->startDailyWorkLabel->setText(QString::number((*selectedProjectIt)->
+                                                      getStartDailyWorkAmount()));
+    ui->currentDailyWorkLabel->setText(QString::number((*selectedProjectIt)->
+                                                        getCurrentDailyWorkAmount()));
+    ui->requiredDailyWorkLabel->setText(QString::number((*selectedProjectIt)->
+                                                         getRequiredDailyWorkAmount()));
+}
+
+void ProjectsWindow::showProjectRewardInfo()
+{
+    ui->dailyRewardLabel->setText(QString::number((*selectedProjectIt)->getDailyReward()));
+    ui->chainMultiplierLabel->setText(QString::number((*selectedProjectIt)->
+                                                       getChainRewardMultiplier()));
+    ui->maxDailyRewardLabel->setText(QString::number((*selectedProjectIt)->
+                                                      getMaxDailyReward()));
+    ui->currentDailyRewardLabel->setText(QString::number((*selectedProjectIt)->
+                                                          getCurrentDailyReward()));
+    ui->currentChainLengthLabel->setText(QString::number((*selectedProjectIt)->
+                                                          getCurrentChainLength()));
+    int currentChainMultiplier = (*selectedProjectIt)->getCurrentChainLength() *
+                                 (*selectedProjectIt)->getChainRewardMultiplier();
+    ui->currentChainMultiplierLabel->setText(QString::number(currentChainMultiplier));
+    ui->totalRewardLabel->setText(QString::number((*selectedProjectIt)->
+                                                   getTotalProjectReward()));
 }
 
 void ProjectsWindow::createTestProject()

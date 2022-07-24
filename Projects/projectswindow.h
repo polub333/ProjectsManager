@@ -31,8 +31,8 @@ private:
 
     void showProjectNameInfo();
     void showProjectDateInfo();
-    void showProjectRewardInfo();
     void showProjectWorkInfo();
+    void showProjectRewardInfo();
 
     void selectProject();
     void createTestProject();
