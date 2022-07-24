@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <memory>
+#include <fstream>
+#include <string>
 
 #include <Projects/project.h>
 #include <Projects/subproject.h>
@@ -38,6 +40,7 @@ private:
 
     void selectProject();
     void createTestProject();
+    void createProjectFromFile(const QString& path);
 
     QDateTime currentDateTime;
 };

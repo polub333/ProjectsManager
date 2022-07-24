@@ -8,7 +8,11 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     currentDateTime = QDateTime::currentDateTime();
-    createTestProject();
+    //createTestProject();
+
+
+    createProjectFromFile("projects/project1.txt");
+
     selectProject();
     showProjectInfo();
 }
@@ -163,6 +167,57 @@ void ProjectsWindow::showSubprojectInfo(
     mainLayout->addLayout(workLayout);
     widget->setLayout(mainLayout);
     ui->subprojectsLayout->addWidget(widget);
+}
+
+void ProjectsWindow::createProjectFromFile(const QString& path)
+{
+    std::fstream file(path.toStdString(), std::ios_base::in);
+    std::string str;
+    std::string str2;
+    std::string str3;
+    std::unique_ptr<Project> project = std::make_unique<Project>();
+    std::getline(file, str);
+    project->setName(QString::fromStdString(str));
+    std::getline(file, str);
+    project->setDescription(QString::fromStdString(str));
+    std::getline(file, str);
+    std::getline(file, str2);
+    std::getline(file, str3);
+    QDate startDate;
+    startDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
+    project->setStartDate(startDate);
+    std::getline(file, str);
+    std::getline(file, str2);
+    std::getline(file, str3);
+    QDate endDate;
+    endDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
+    project->setEndDate(endDate);
+    std::getline(file, str);
+    project->setWorkAmount(stoi(str));
+    std::getline(file, str);
+    project->setDailyReward(stoi(str));
+    std::getline(file, str);
+    project->setChainRewardMultiplier(stoi(str));
+    std::getline(file, str);
+    project->setMaxDailyReward(stoi(str));
+    std::getline(file, str);
+    int subprojects = stoi(str);
+    for(int i=0;i<subprojects;++i){
+        std::unique_ptr<Subproject> subproject = std::make_unique<Subproject>();
+        std::getline(file, str);
+        subproject->setName(QString::fromStdString(str));
+        std::getline(file, str);
+        std::getline(file, str2);
+        std::getline(file, str3);
+        QDate endSubprojectDate;
+        endSubprojectDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
+        subproject->setDate(endSubprojectDate);
+        subproject->setDone(false);
+        std::getline(file, str);
+        subproject->setWorkAmount(stoi(str));
+        project->addSubproject(std::move(subproject));
+    }
+    projects.push_back(std::move(project));
 }
 
 void ProjectsWindow::createTestProject()
