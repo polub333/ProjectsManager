@@ -45,6 +45,11 @@ void Project::setExpectedEndDate(const QDate& _expectedEndDate)
     expectedEndDate = _expectedEndDate;
 }
 
+void Project::setDaysGone(const int& _daysGone)
+{
+    daysGone = _daysGone;
+}
+
 void Project::setWorkAmount(const int& _workAmount)
 {
     workAmount = _workAmount;
@@ -138,6 +143,11 @@ int Project::getBehindSceduleWorkAmount() const
 QDate Project::getExpectedEndDate() const
 {
     return expectedEndDate;
+}
+
+int Project::getDaysGone() const
+{
+    return daysGone;
 }
 
 int Project::getWorkAmount() const

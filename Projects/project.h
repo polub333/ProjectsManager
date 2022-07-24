@@ -24,6 +24,7 @@ public:
     void setBehindScheduleDays(const int& _beihindSceduleDays);
     void setBehindScheduleWorkAmount(const int& _behindSceduleWorkAmount);
     void setExpectedEndDate(const QDate& _expectedEndDate);
+    void setDaysGone(const int& _daysGone);
 
     void setWorkAmount(const int& _workAmount);
     void setWorkDone(const int& _workDone);
@@ -47,6 +48,7 @@ public:
     int getBehindSceduleDays() const;
     int getBehindSceduleWorkAmount() const;
     QDate getExpectedEndDate() const;
+    int getDaysGone() const;
 
     int getWorkAmount() const;
     int getWorkDone() const;
@@ -73,6 +75,7 @@ private:
     int behindScheduleDays;
     int behindScheduleWorkAmount;
     QDate expectedEndDate;
+    int daysGone;
 
     int workAmount;
     int workDone;
