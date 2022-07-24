@@ -3,6 +3,11 @@
 
 #include <QWidget>
 
+#include <vector>
+
+#include <Projects/project.h>
+#include <Projects/subproject.h>
+
 namespace Ui {
 class ProjectsWindow;
 }
@@ -17,6 +22,8 @@ public:
 
 private:
     Ui::ProjectsWindow *ui;
+
+    std::vector<Project*> projects;
 };
 
 #endif // PROJECTSWINDOW_H
