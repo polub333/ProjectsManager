@@ -10,6 +10,18 @@ void Project::addSubproject(std::unique_ptr<Subproject> subproject)
     subprojects.push_back(std::move(subproject));
 }
 
+std::vector<std::unique_ptr<Subproject>>::const_iterator
+Project::getSubprojectsBeginIterator() const
+{
+    return subprojects.begin();
+}
+
+std::vector<std::unique_ptr<Subproject>>::const_iterator
+Project::getSubprojectsEndIterator() const
+{
+    return subprojects.end();
+}
+
 void Project::setName(const QString& _name)
 {
     name = _name;

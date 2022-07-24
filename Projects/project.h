@@ -14,13 +14,9 @@ class Project
 public:
     Project();
 
-
-    //Project(Project& _pr) = delete;
-    //Project& operator=(const Project&) = delete;
-    //Project& operator=(Project&&) = default;
-    //Project(Project&& _pr) = default;
-
     void addSubproject(std::unique_ptr<Subproject> _subproject);
+    std::vector<std::unique_ptr<Subproject>>::const_iterator getSubprojectsBeginIterator() const;
+    std::vector<std::unique_ptr<Subproject>>::const_iterator getSubprojectsEndIterator() const;
 
     void setName(const QString& _name);
     void setDescription(const QString& _description);

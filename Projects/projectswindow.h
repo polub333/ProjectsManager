@@ -28,11 +28,13 @@ private:
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
 
     void showProjectInfo();
-
     void showProjectNameInfo();
     void showProjectDateInfo();
     void showProjectWorkInfo();
     void showProjectRewardInfo();
+    void showProjectsSubprojects();
+    void showSubprojectInfo(
+            std::vector<std::unique_ptr<Subproject>>::const_iterator subprojectIt);
 
     void selectProject();
     void createTestProject();

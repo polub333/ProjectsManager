@@ -31,6 +31,7 @@ void ProjectsWindow::showProjectInfo()
     showProjectDateInfo();
     showProjectWorkInfo();
     showProjectRewardInfo();
+    showProjectsSubprojects();
 }
 
 void ProjectsWindow::showProjectNameInfo()
@@ -104,6 +105,66 @@ void ProjectsWindow::showProjectRewardInfo()
                                                    getTotalProjectReward()));
 }
 
+void ProjectsWindow::showProjectsSubprojects()
+{
+    auto begin = (*selectedProjectIt)->getSubprojectsBeginIterator();
+    auto end = (*selectedProjectIt)->getSubprojectsEndIterator();
+    for(auto it = begin; it != end; ++it){
+        showSubprojectInfo(it);
+    }
+}
+
+void ProjectsWindow::showSubprojectInfo(
+        std::vector<std::unique_ptr<Subproject>>::const_iterator subprojectIt)
+{
+    QString name = (*subprojectIt)->getName();
+    int workAmount = (*subprojectIt)->getWorkAmount();
+    int workDone = (*subprojectIt)->getWorkDone();
+    QDate date = (*subprojectIt)->getDate();
+    QString stringDate = QString::number(date.day()) + "/" +
+                         QString::number(date.month()) + "/" +
+                         QString::number(date.year());
+
+    QWidget* widget = new QWidget(this);
+    QVBoxLayout* mainLayout = new QVBoxLayout();
+    QHBoxLayout* nameAndDateLayout = new QHBoxLayout();
+    QHBoxLayout* workLayout = new QHBoxLayout();
+    QVBoxLayout* workStaticLayout = new QVBoxLayout();
+    QVBoxLayout* workDinamicLayout = new QVBoxLayout();
+
+    QLabel* nameLabel = new QLabel(widget);
+    nameLabel->setText(name);
+    nameAndDateLayout->addWidget(nameLabel);
+    QLabel* dateLabel = new QLabel(widget);
+    dateLabel->setText(stringDate);
+    nameAndDateLayout->addWidget(dateLabel);
+
+    QProgressBar* progressBar = new QProgressBar(widget);
+    progressBar->setValue((double) workDone / workAmount * 100);
+
+    QLabel* workAmountLabel = new QLabel(widget);
+    QLabel* workAmountStaticLabel = new QLabel(widget);
+    workAmountLabel->setText(QString::number(workAmount));
+    workAmountStaticLabel->setText("Work Amount");
+    workStaticLayout->addWidget(workAmountStaticLabel);
+    workDinamicLayout->addWidget(workAmountLabel);
+
+    QLabel* workDoneLabel = new QLabel(widget);
+    QLabel* workDoneStaticLabel = new QLabel(widget);
+    workDoneLabel->setText(QString::number(workDone));
+    workDoneStaticLabel->setText("Work Done");
+    workStaticLayout->addWidget(workDoneStaticLabel);
+    workDinamicLayout->addWidget(workDoneLabel);
+
+    workLayout->addLayout(workStaticLayout);
+    workLayout->addLayout(workDinamicLayout);
+    mainLayout->addLayout(nameAndDateLayout);
+    mainLayout->addWidget(progressBar);
+    mainLayout->addLayout(workLayout);
+    widget->setLayout(mainLayout);
+    ui->subprojectsLayout->addWidget(widget);
+}
+
 void ProjectsWindow::createTestProject()
 {
     std::unique_ptr<Project> project = std::make_unique<Project>();
@@ -128,5 +189,22 @@ void ProjectsWindow::createTestProject()
     project->setCurrentDailyReward(-1);
     project->setCurrentChainLength(-1000);
     project->setTotalProjectReward(10000000);
+
+    std::unique_ptr<Subproject> sub1 = std::make_unique<Subproject>();
+    std::unique_ptr<Subproject> sub2 = std::make_unique<Subproject>();
+
+    sub1->setName("SUB1");
+    sub1->setDate(QDate(2025, 01, 29));
+    sub1->setWorkAmount(100);
+    sub1->setWorkDone(10);
+
+    sub2->setName("SUB2");
+    sub2->setDate(QDate(1991, 10, 15));
+    sub2->setWorkAmount(100);
+    sub2->setWorkDone(110);
+
+    project->addSubproject(std::move(sub1));
+    project->addSubproject(std::move(sub2));
+
     projects.push_back(std::move(project));
 }
