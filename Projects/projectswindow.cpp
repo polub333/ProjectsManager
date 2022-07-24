@@ -72,8 +72,11 @@ void ProjectsWindow::showProjectDateInfo()
 
 void ProjectsWindow::showProjectWorkInfo()
 {
-    ui->workAmountLabel->setText(QString::number((*selectedProjectIt)->getWorkAmount()));
-    ui->workDoneLabel->setText(QString::number((*selectedProjectIt)->getWorkDone()));
+    int workAmount = (*selectedProjectIt)->getWorkAmount();
+    int workDone = (*selectedProjectIt)->getWorkDone();
+    ui->progressBar->setValue((double)workDone / workAmount * 100);
+    ui->workAmountLabel->setText(QString::number(workAmount));
+    ui->workDoneLabel->setText(QString::number(workDone));
     ui->workRemainingLabel->setText(QString::number((*selectedProjectIt)->getWorkRemaining()));
     ui->startDailyWorkLabel->setText(QString::number((*selectedProjectIt)->
                                                       getStartDailyWorkAmount()));
