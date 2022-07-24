@@ -13,7 +13,7 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 
     createProjectFromFile("projects/project1.txt");
 
-    selectProject();
+  //  selectProject(project);
     showProjectInfo();
 }
 
@@ -22,11 +22,18 @@ ProjectsWindow::~ProjectsWindow()
     delete ui;
 }
 
-void ProjectsWindow::selectProject()
+void ProjectsWindow::selectProject(
+        const std::vector<std::unique_ptr<Project>>::iterator iterator)
 {
-    selectedProjectIt = projects.begin();
-    //auto sp = projects[0].get();
-    //selectedProject = *(*projects.begin());
+    selectedProjectIt = iterator;
+}
+
+void ProjectsWindow::recalculateProjects()
+{
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        // TODO
+        // Recalculating projects fields
+    }
 }
 
 void ProjectsWindow::showProjectInfo()
@@ -218,6 +225,7 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
         project->addSubproject(std::move(subproject));
     }
     projects.push_back(std::move(project));
+    selectProject(projects.end() - 1);
 }
 
 void ProjectsWindow::createTestProject()

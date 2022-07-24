@@ -38,9 +38,11 @@ private:
     void showSubprojectInfo(
             std::vector<std::unique_ptr<Subproject>>::const_iterator subprojectIt);
 
-    void selectProject();
+    void selectProject(const std::vector<std::unique_ptr<Project>>::iterator iterator);
     void createTestProject();
     void createProjectFromFile(const QString& path);
+
+    void recalculateProjects();
 
     QDateTime currentDateTime;
 };
