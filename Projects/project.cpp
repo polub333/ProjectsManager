@@ -7,7 +7,7 @@ Project::Project()
 
 void Project::addSubproject(std::unique_ptr<Subproject> subproject)
 {
-    subprojects.push_back(subproject);
+    subprojects.push_back(std::move(subproject));
 }
 
 void Project::setName(const QString& _name)

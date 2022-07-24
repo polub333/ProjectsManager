@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include <vector>
+#include <memory>
 
 #include <Projects/project.h>
 #include <Projects/subproject.h>
@@ -23,7 +24,12 @@ public:
 private:
     Ui::ProjectsWindow *ui;
 
-    std::vector<Project*> projects;
+    std::vector<std::unique_ptr<Project>> projects;
+    std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
+
+    void showProjectInfo();
+    void selectProject();
+    void createTestProject();
 };
 
 #endif // PROJECTSWINDOW_H
