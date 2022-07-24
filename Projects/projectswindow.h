@@ -28,8 +28,16 @@ private:
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
 
     void showProjectInfo();
+
+    void showProjectNameInfo();
+    void showProjectDateInfo();
+    void showProjectRewardInfo();
+    void showProjectWorkInfo();
+
     void selectProject();
     void createTestProject();
+
+    QDateTime currentDateTime;
 };
 
 #endif // PROJECTSWINDOW_H

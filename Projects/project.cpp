@@ -50,6 +50,11 @@ void Project::setDaysGone(const int& _daysGone)
     daysGone = _daysGone;
 }
 
+void Project::setDaysRemaining(const int& _daysRemaining)
+{
+    daysRemaining = _daysRemaining;
+}
+
 void Project::setWorkAmount(const int& _workAmount)
 {
     workAmount = _workAmount;
@@ -148,6 +153,11 @@ QDate Project::getExpectedEndDate() const
 int Project::getDaysGone() const
 {
     return daysGone;
+}
+
+int Project::getDaysRemaining() const
+{
+    return daysRemaining;
 }
 
 int Project::getWorkAmount() const

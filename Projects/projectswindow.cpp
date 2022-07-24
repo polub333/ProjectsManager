@@ -7,12 +7,9 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
  //   selectedProject(*(new Project()))
 {
     ui->setupUi(this);
-//    selectedProject = Project();
-    qDebug()<<1;
+    currentDateTime = QDateTime::currentDateTime();
     createTestProject();
-    qDebug()<<projects.size();
     selectProject();
-    qDebug()<<projects.size();
     showProjectInfo();
 }
 
@@ -30,8 +27,45 @@ void ProjectsWindow::selectProject()
 
 void ProjectsWindow::showProjectInfo()
 {
+    showProjectNameInfo();
+    showProjectDateInfo();
+}
+
+void ProjectsWindow::showProjectNameInfo()
+{
     ui->nameLabel->setText((*selectedProjectIt)->getName());
     ui->descriptionLabel->setText((*selectedProjectIt)->getDescription());
+}
+
+void ProjectsWindow::showProjectDateInfo()
+{
+    QDate startDate = (*selectedProjectIt)->getStartDate();
+    QDate endDate = (*selectedProjectIt)->getEndDate();
+    QDate expectedEndDate = (*selectedProjectIt)->getExpectedEndDate();
+    QString stringStartDate = QString::number(startDate.day()) + "/" +
+                              QString::number(startDate.month()) + "/" +
+                              QString::number(startDate.year());
+    QString stringEndDate = QString::number(endDate.day()) + "/" +
+                            QString::number(endDate.month()) + "/" +
+                            QString::number(endDate.year());
+    QString stringExpectedEndDate = QString::number(expectedEndDate.day()) + "/" +
+                                    QString::number(expectedEndDate.month()) + "/" +
+                                    QString::number(expectedEndDate.year());
+    ui->startDateLabel->setText(stringStartDate);
+    ui->endDateLabel->setText(stringEndDate);
+    ui->expectedEndDateLabel->setText(stringExpectedEndDate);
+
+    QString behindScheduleDaysString = QString::number((*selectedProjectIt)->
+                                                        getBehindSceduleDays());
+    QString behindScheduleWorkString = QString::number((*selectedProjectIt)->
+                                                        getBehindSceduleWorkAmount());
+    ui->behindScheduleDaysLabel->setText(behindScheduleDaysString);
+    ui->behinScheduleWorkLabel->setText(behindScheduleWorkString);
+
+    QString daysGone = QString::number((*selectedProjectIt)->getDaysGone());
+    QString daysRemaining = QString::number((*selectedProjectIt)->getDaysRemaining());
+    ui->daysGoneLabel->setText(daysGone);
+    ui->daysRemainingLabel->setText(daysRemaining);
 }
 
 void ProjectsWindow::createTestProject()
@@ -45,6 +79,7 @@ void ProjectsWindow::createTestProject()
     project->setBehindScheduleWorkAmount(0);
     project->setExpectedEndDate(project->getEndDate());
     project->setDaysGone(0);
+    project->setDaysRemaining(100000);
     project->setWorkAmount(100);
     project->setWorkDone(50);
     project->setWorkRemaining(project->getWorkAmount() - project->getWorkDone());
