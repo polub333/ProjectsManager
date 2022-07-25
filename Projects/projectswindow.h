@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <filesystem>
 #include <string>
 
 #include <Projects/project.h>
@@ -28,6 +29,7 @@ private:
 
     std::vector<std::unique_ptr<Project>> projects;
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
+    std::vector<std::unique_ptr<Project>>::iterator findProjectByName(const QString& name);
 
     void showProjectInfo();
     void showProjectNameInfo();
@@ -41,6 +43,9 @@ private:
     void selectProject(const std::vector<std::unique_ptr<Project>>::iterator iterator);
     void createTestProject();
     void createProjectFromFile(const QString& path);
+
+    void readEntries(const QString& path);
+    void readEntry(const std::string& path);
 
     void recalculateProjects();
 

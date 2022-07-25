@@ -28,12 +28,50 @@ void ProjectsWindow::selectProject(
     selectedProjectIt = iterator;
 }
 
+std::vector<std::unique_ptr<Project>>::iterator
+ProjectsWindow::findProjectByName(const QString& name)
+{
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        if((*it)->getName() == name){
+            return it;
+        }
+    }
+    return projects.end();
+}
+
 void ProjectsWindow::recalculateProjects()
 {
     for(auto it = projects.begin(); it != projects.end(); ++it){
         // TODO
-        // Recalculating projects fields
+        /*
+        recalculateDates();
+        recalculateWorks();
+        recalculateRewards();
+        */
     }
+}
+
+void ProjectsWindow::readEntries(const QString& path)
+{
+    for(std::filesystem::recursive_directory_iterator it(path.toStdString()), end;
+        it != end; ++it){
+        if(it->path().extension() == ".txt"){
+            readEntry(it->path().string());
+        }
+    }
+}
+
+void ProjectsWindow::readEntry(const std::string& path)
+{
+    std::fstream entry(path, std::ios_base::in);
+    std::string str;
+    getline(entry, str);
+    auto projectIt = findProjectByName(QString::fromStdString(str));
+    if(projectIt == projects.end()){
+        qDebug()<<"No such prject";
+        return;
+    }
+
 }
 
 void ProjectsWindow::showProjectInfo()
