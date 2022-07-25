@@ -8,16 +8,14 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     currentDateTime = QDateTime::currentDateTime();
-    //createTestProject();
-
 
     createProjectFromFile("projects/project1.txt");
+    createProjectFromFile("projects/project2.txt");
 
-  //  selectProject(project);
-    showProjectInfo();
 
     readEntries("entries");
-    recalculateProjectsFromEntries();
+    processEntries();
+    calculateProjects();
 
     showProjectInfo();
 
@@ -45,14 +43,93 @@ ProjectsWindow::findProjectByName(const QString& name)
     return projects.end();
 }
 
-void ProjectsWindow::recalculateProjectsFromEntries()
+void ProjectsWindow::calculateProjects()
 {
-    for(auto it = entries.begin(); it != entries.end(); ++it){
-        recalculateProjectFromEntry(it);
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        calculateProject(it);
     }
 }
 
-void ProjectsWindow::recalculateProjectFromEntry(
+void ProjectsWindow::calculateProject(std::vector<std::unique_ptr<Project>>::iterator projectIt)
+{
+    // TODO
+    // Распарсить все это на маленькие функции, еавести порядок с условиями.
+    // Помнить, что в статистику текующий день никак не входит
+    // После ввода данных за текущий день, данные становятся недействительными, поэтому
+    // статистику надо смотреть до ввода данных за текущий день
+    QDateTime startDate, endDate;
+    startDate.setDate((*projectIt)->getStartDate());
+    endDate.setDate((*projectIt)->getEndDate());
+    int duration = startDate.daysTo(endDate) + 1;
+    int daysGone = startDate.daysTo(currentDateTime);
+    if(daysGone > duration){
+        daysGone = duration;
+    }
+    int daysRemaining = currentDateTime.daysTo(endDate) + 1;
+    if(daysRemaining < 0){
+        daysRemaining = 0;
+    }
+    int workAmount = (*projectIt)->getWorkAmount();
+    int workDone = (*projectIt)->getWorkDone();
+    int workRemaining = workAmount - workDone;
+    double expectedWorkDone = (double)workAmount / duration * daysGone;
+    double workDoneDifference = (double)expectedWorkDone - workDone;
+    if(workDoneDifference > workRemaining){
+        workDoneDifference = workRemaining;
+    }
+    int behindScheduleDays = workDoneDifference / (*projectIt)->getStartDailyWorkAmount();
+    int behindScheduleWorkAmount = workDoneDifference;
+    double currentDailyWorkAmount;
+    if(daysGone == 0){
+        currentDailyWorkAmount = workDone;
+    }
+    else{
+        currentDailyWorkAmount = (double)workDone / (daysGone);
+    }
+    double requiredDailyWorkAmount;
+    if(daysRemaining == 0){
+        requiredDailyWorkAmount = -1;
+    }
+    else{
+        requiredDailyWorkAmount = (double)workRemaining / daysRemaining;
+    }
+
+    double currentChainMultiplier = (double)(*projectIt)->getCurrentChainLength() * (double)
+                                 (*projectIt)->getChainRewardMultiplier();
+    double currentDailyReward =
+            (double)(*projectIt)->getDailyReward() * (1 + currentChainMultiplier);
+    QDate expectedEndDate;
+    if(workDone == 0){
+        expectedEndDate = QDate(1, 1, 1);
+    }
+    else{
+        int daysRequired = workRemaining / currentDailyWorkAmount;
+        QDateTime expectedEndDateTime = currentDateTime.addDays(daysRequired - 1);
+        expectedEndDate = expectedEndDateTime.date();
+    }
+
+
+    (*projectIt)->setBehindScheduleDays(behindScheduleDays);
+    (*projectIt)->setBehindScheduleWorkAmount(behindScheduleWorkAmount);
+    (*projectIt)->setExpectedEndDate(expectedEndDate);
+    (*projectIt)->setDaysGone(daysGone);
+    (*projectIt)->setDaysRemaining(daysRemaining);
+
+    (*projectIt)->setWorkRemaining(workRemaining);
+    (*projectIt)->setCurrentDailyWorkAmount(currentDailyWorkAmount);
+    (*projectIt)->setRequiredDailyWorkAmount(requiredDailyWorkAmount);
+
+    (*projectIt)->setCurrentDailyReward(currentDailyReward);
+}
+
+void ProjectsWindow::processEntries()
+{
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        processEntry(it);
+    }
+}
+
+void ProjectsWindow::processEntry(
         std::vector<std::unique_ptr<Entry>>::iterator entryIt)
 {
     std::vector<std::unique_ptr<Project>>::iterator projectIt = projects.end();
@@ -66,6 +143,22 @@ void ProjectsWindow::recalculateProjectFromEntry(
         return;
     }
     (*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
+    QDateTime previousEntryDate, currentEntryDate;
+    previousEntryDate.setDate((*projectIt)->getPreviousEntry());
+    currentEntryDate.setDate((*entryIt)->getDate());
+    int daysTo = previousEntryDate.daysTo(currentEntryDate);
+    if(daysTo <= 2){
+        if(daysTo != 0){
+            (*projectIt)->setCurrentChainLength((*projectIt)->getCurrentChainLength() + 1);
+            (*projectIt)->addReward((*projectIt)->getCurrentDailyReward());
+        }
+    }
+    else{
+        (*projectIt)->setCurrentChainLength(1);
+        (*projectIt)->addReward((*projectIt)->getCurrentDailyReward());
+    }
+    (*projectIt)->setPreviousEntry(currentEntryDate.date());
+    calculateProject(projectIt);
 }
 
 void ProjectsWindow::readEntries(const QString& path)
@@ -82,21 +175,24 @@ void ProjectsWindow::readEntry(const std::string& path)
 {
     std::fstream entryFile(path, std::ios_base::in);
     std::string str, str2, str3;
-    std::unique_ptr<Entry> entry = std::make_unique<Entry>();
-    getline(entryFile, str);
-    getline(entryFile, str2);
-    getline(entryFile, str3);
-    entry->setDate(QDate(std::stoi(str3), std::stoi(str2), std::stoi(str)));
-    getline(entryFile, str);
-    auto projectIt = findProjectByName(QString::fromStdString(str));
-    if(projectIt == projects.end()){
-        qDebug()<<"No such prject";
-        return;
+    while(!entryFile.eof()){
+        std::unique_ptr<Entry> entry = std::make_unique<Entry>();
+        getline(entryFile, str);
+        getline(entryFile, str2);
+        getline(entryFile, str3);
+        entry->setDate(QDate(std::stoi(str3), std::stoi(str2), std::stoi(str)));
+        getline(entryFile, str);
+        auto projectIt = findProjectByName(QString::fromStdString(str));
+        if(projectIt == projects.end()){
+            qDebug()<<"No such prject";
+            return;
+        }
+        entry->setProjectName(QString::fromStdString(str));
+        getline(entryFile, str);
+        entry->setWorkAmount(stoi(str));
+        entries.push_back(std::move(entry));
     }
-    entry->setProjectName(QString::fromStdString(str));
-    getline(entryFile, str);
-    entry->setWorkAmount(stoi(str));
-    entries.push_back(std::move(entry));
+    entryFile.close();
 }
 
 void ProjectsWindow::showProjectInfo()
@@ -105,7 +201,7 @@ void ProjectsWindow::showProjectInfo()
     showProjectDateInfo();
     showProjectWorkInfo();
     showProjectRewardInfo();
-    showProjectsSubprojects();
+    showProjectSubprojects();
 }
 
 void ProjectsWindow::showProjectNameInfo()
@@ -172,14 +268,14 @@ void ProjectsWindow::showProjectRewardInfo()
                                                           getCurrentDailyReward()));
     ui->currentChainLengthLabel->setText(QString::number((*selectedProjectIt)->
                                                           getCurrentChainLength()));
-    int currentChainMultiplier = (*selectedProjectIt)->getCurrentChainLength() *
-                                 (*selectedProjectIt)->getChainRewardMultiplier();
+    double currentChainMultiplier = (double)(*selectedProjectIt)->getCurrentChainLength() *
+                                            (*selectedProjectIt)->getChainRewardMultiplier();
     ui->currentChainMultiplierLabel->setText(QString::number(currentChainMultiplier));
     ui->totalRewardLabel->setText(QString::number((*selectedProjectIt)->
                                                    getTotalProjectReward()));
 }
 
-void ProjectsWindow::showProjectsSubprojects()
+void ProjectsWindow::showProjectSubprojects()
 {
     auto begin = (*selectedProjectIt)->getSubprojectsBeginIterator();
     auto end = (*selectedProjectIt)->getSubprojectsEndIterator();
@@ -264,12 +360,22 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
     project->setEndDate(endDate);
     std::getline(file, str);
     project->setWorkAmount(stoi(str));
+    QDateTime startDateTime, endDateTime;
+    startDateTime.setDate(startDate);
+    endDateTime.setDate(endDate);
+    int duration = startDateTime.daysTo(endDateTime) + 1;
+    project->setStartDailyWorkAmount((double)stod(str) / duration);
+    project->setWorkDone(0);
     std::getline(file, str);
-    project->setDailyReward(stoi(str));
+    project->setDailyReward(stod(str));
+    project->setCurrentDailyReward(stod(str));
+    project->setCurrentChainLength(0);
     std::getline(file, str);
-    project->setChainRewardMultiplier(stoi(str));
+    project->setChainRewardMultiplier(stod(str));
+    project->setPreviousEntry(QDate(1, 1, 1));
     std::getline(file, str);
-    project->setMaxDailyReward(stoi(str));
+    project->setMaxDailyReward(stod(str));
+    project->setTotalProjectReward(0);
     std::getline(file, str);
     int subprojects = stoi(str);
     for(int i=0;i<subprojects;++i){
@@ -289,6 +395,7 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
     }
     projects.push_back(std::move(project));
     selectProject(projects.end() - 1);
+    file.close();
 }
 
 void ProjectsWindow::createTestProject()

@@ -22,6 +22,11 @@ Project::getSubprojectsEndIterator() const
     return subprojects.end();
 }
 
+void Project::addReward(const double& reward)
+{
+    totalProjectReward += reward;
+}
+
 void Project::setName(const QString& _name)
 {
     name = _name;
@@ -82,37 +87,37 @@ void Project::setWorkRemaining(const int& _workRemaining)
     workRemaining = _workRemaining;
 }
 
-void Project::setStartDailyWorkAmount(const int& _startDailyWorkAmount)
+void Project::setStartDailyWorkAmount(const double& _startDailyWorkAmount)
 {
     startDailyWorkAmount = _startDailyWorkAmount;
 }
 
-void Project::setCurrentDailyWorkAmount(const int& _currentDailyWorkAmount)
+void Project::setCurrentDailyWorkAmount(const double& _currentDailyWorkAmount)
 {
     currentDailyWorkAmount = _currentDailyWorkAmount;
 }
 
-void Project::setRequiredDailyWorkAmount(const int& _requiredDailyWorkAmount)
+void Project::setRequiredDailyWorkAmount(const double& _requiredDailyWorkAmount)
 {
     requiredDailyWorkAmount = _requiredDailyWorkAmount;
 }
 
-void Project::setDailyReward(const int& _dailyReward)
+void Project::setDailyReward(const double& _dailyReward)
 {
     dailyReward = _dailyReward;
 }
 
-void Project::setChainRewardMultiplier(const int& _chainRewardMultiplier)
+void Project::setChainRewardMultiplier(const double& _chainRewardMultiplier)
 {
     chainRewardMultiplier = _chainRewardMultiplier;
 }
 
-void Project::setMaxDailyReward(const int& _maxDailyReward)
+void Project::setMaxDailyReward(const double& _maxDailyReward)
 {
     maxDailyReward =_maxDailyReward;
 }
 
-void Project::setCurrentDailyReward(const int& _currentDailyReward)
+void Project::setCurrentDailyReward(const double& _currentDailyReward)
 {
     currentDailyReward = _currentDailyReward;
 }
@@ -122,7 +127,12 @@ void Project::setCurrentChainLength(const int& _currentChainLength)
     currentChainLength = _currentChainLength;
 }
 
-void Project::setTotalProjectReward(const int& _totalProjectReward)
+void Project::setPreviousEntry(const QDate& _previousEntry)
+{
+    previousEntry = _previousEntry;
+}
+
+void Project::setTotalProjectReward(const double& _totalProjectReward)
 {
     totalProjectReward = _totalProjectReward;
 }
@@ -187,37 +197,37 @@ int Project::getWorkRemaining() const
     return workRemaining;
 }
 
-int Project::getStartDailyWorkAmount() const
+double Project::getStartDailyWorkAmount() const
 {
     return startDailyWorkAmount;
 }
 
-int Project::getCurrentDailyWorkAmount() const
+double Project::getCurrentDailyWorkAmount() const
 {
     return currentDailyWorkAmount;
 }
 
-int Project::getRequiredDailyWorkAmount() const
+double Project::getRequiredDailyWorkAmount() const
 {
     return requiredDailyWorkAmount;
 }
 
-int Project::getDailyReward() const
+double Project::getDailyReward() const
 {
     return dailyReward;
 }
 
-int Project::getChainRewardMultiplier() const
+double Project::getChainRewardMultiplier() const
 {
     return chainRewardMultiplier;
 }
 
-int Project::getMaxDailyReward() const
+double Project::getMaxDailyReward() const
 {
     return maxDailyReward;
 }
 
-int Project::getCurrentDailyReward() const
+double Project::getCurrentDailyReward() const
 {
     return currentDailyReward;
 }
@@ -227,7 +237,12 @@ int Project::getCurrentChainLength() const
     return currentChainLength;
 }
 
-int Project::getTotalProjectReward() const
+QDate Project::getPreviousEntry() const
+{
+    return previousEntry;
+}
+
+double Project::getTotalProjectReward() const
 {
     return totalProjectReward;
 }

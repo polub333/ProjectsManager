@@ -39,7 +39,7 @@ private:
     void showProjectDateInfo();
     void showProjectWorkInfo();
     void showProjectRewardInfo();
-    void showProjectsSubprojects();
+    void showProjectSubprojects();
     void showSubprojectInfo(
             std::vector<std::unique_ptr<Subproject>>::const_iterator subprojectIt);
 
@@ -49,9 +49,11 @@ private:
 
     void readEntries(const QString& path);
     void readEntry(const std::string& path);
-
     void processEntries();
     void processEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
+
+    void calculateProjects();
+    void calculateProject(std::vector<std::unique_ptr<Project>>::iterator projectIt);
 
     QDateTime currentDateTime;
 };

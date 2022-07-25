@@ -18,6 +18,8 @@ public:
     std::vector<std::unique_ptr<Subproject>>::const_iterator getSubprojectsBeginIterator() const;
     std::vector<std::unique_ptr<Subproject>>::const_iterator getSubprojectsEndIterator() const;
 
+    void addReward(const double& reward);
+
     void setName(const QString& _name);
     void setDescription(const QString& _description);
 
@@ -32,16 +34,17 @@ public:
     void setWorkAmount(const int& _workAmount);
     void setWorkDone(const int& _workDone);
     void setWorkRemaining(const int& _workRemaining);
-    void setStartDailyWorkAmount(const int& _startDailyWorkAmount);
-    void setCurrentDailyWorkAmount(const int& _currentDailyWorkAmount);
-    void setRequiredDailyWorkAmount(const int& _requiredDailyWorkAmount);
+    void setStartDailyWorkAmount(const double& _startDailyWorkAmount);
+    void setCurrentDailyWorkAmount(const double& _currentDailyWorkAmount);
+    void setRequiredDailyWorkAmount(const double& _requiredDailyWorkAmount);
 
-    void setDailyReward(const int& _dailyReward);
-    void setChainRewardMultiplier(const int& _chainRewardMultiplier);
-    void setMaxDailyReward(const int& _maxDailyReward);
-    void setCurrentDailyReward(const int& _currentDailyReward);
+    void setDailyReward(const double& _dailyReward);
+    void setChainRewardMultiplier(const double& _chainRewardMultiplier);
+    void setMaxDailyReward(const double& _maxDailyReward);
+    void setCurrentDailyReward(const double& _currentDailyReward);
     void setCurrentChainLength(const int& _currentChainLength);
-    void setTotalProjectReward(const int& _totalProjectReward);
+    void setPreviousEntry(const QDate& _previousEntry);
+    void setTotalProjectReward(const double& _totalProjectReward);
 
     QString getName() const;
     QString getDescription() const;
@@ -57,16 +60,17 @@ public:
     int getWorkAmount() const;
     int getWorkDone() const;
     int getWorkRemaining() const;
-    int getStartDailyWorkAmount() const;
-    int getCurrentDailyWorkAmount() const;
-    int getRequiredDailyWorkAmount() const;
+    double getStartDailyWorkAmount() const;
+    double getCurrentDailyWorkAmount() const;
+    double getRequiredDailyWorkAmount() const;
 
-    int getDailyReward() const;
-    int getChainRewardMultiplier() const;
-    int getMaxDailyReward() const;
-    int getCurrentDailyReward() const;
+    double getDailyReward() const;
+    double getChainRewardMultiplier() const;
+    double getMaxDailyReward() const;
+    double getCurrentDailyReward() const;
     int getCurrentChainLength() const;
-    int getTotalProjectReward() const;
+    QDate getPreviousEntry() const;
+    double getTotalProjectReward() const;
 
 private:
     std::vector<std::unique_ptr<Subproject>> subprojects;
@@ -85,16 +89,17 @@ private:
     int workAmount;
     int workDone;
     int workRemaining;
-    int startDailyWorkAmount;
-    int currentDailyWorkAmount;
-    int requiredDailyWorkAmount;
+    double startDailyWorkAmount;
+    double currentDailyWorkAmount;
+    double requiredDailyWorkAmount;
 
-    int dailyReward;
-    int chainRewardMultiplier;
-    int maxDailyReward;
-    int currentDailyReward;
+    double dailyReward;
+    double chainRewardMultiplier;
+    double maxDailyReward;
+    double currentDailyReward;
     int currentChainLength;
-    int totalProjectReward;
+    QDate previousEntry;
+    double totalProjectReward;
 
 };
 
