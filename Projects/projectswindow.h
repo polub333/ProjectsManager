@@ -11,6 +11,7 @@
 
 #include <Projects/project.h>
 #include <Projects/subproject.h>
+#include <Projects/entry.h>
 
 namespace Ui {
 class ProjectsWindow;
@@ -31,6 +32,8 @@ private:
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
     std::vector<std::unique_ptr<Project>>::iterator findProjectByName(const QString& name);
 
+    std::vector<std::unique_ptr<Entry>> entries;
+
     void showProjectInfo();
     void showProjectNameInfo();
     void showProjectDateInfo();
@@ -47,7 +50,8 @@ private:
     void readEntries(const QString& path);
     void readEntry(const std::string& path);
 
-    void recalculateProjects();
+    void processEntries();
+    void processEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
 
     QDateTime currentDateTime;
 };

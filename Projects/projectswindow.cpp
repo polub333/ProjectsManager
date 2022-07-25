@@ -15,6 +15,12 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 
   //  selectProject(project);
     showProjectInfo();
+
+    readEntries("entries");
+    recalculateProjectsFromEntries();
+
+    showProjectInfo();
+
 }
 
 ProjectsWindow::~ProjectsWindow()
@@ -39,16 +45,27 @@ ProjectsWindow::findProjectByName(const QString& name)
     return projects.end();
 }
 
-void ProjectsWindow::recalculateProjects()
+void ProjectsWindow::recalculateProjectsFromEntries()
 {
-    for(auto it = projects.begin(); it != projects.end(); ++it){
-        // TODO
-        /*
-        recalculateDates();
-        recalculateWorks();
-        recalculateRewards();
-        */
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        recalculateProjectFromEntry(it);
     }
+}
+
+void ProjectsWindow::recalculateProjectFromEntry(
+        std::vector<std::unique_ptr<Entry>>::iterator entryIt)
+{
+    std::vector<std::unique_ptr<Project>>::iterator projectIt = projects.end();
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        if((*it)->getName() == (*entryIt)->getProjectName()){
+            projectIt = it;
+        }
+    }
+    if(projectIt == projects.end()){
+        qDebug()<<"No such project from entry projectName";
+        return;
+    }
+    (*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
 }
 
 void ProjectsWindow::readEntries(const QString& path)
@@ -63,15 +80,23 @@ void ProjectsWindow::readEntries(const QString& path)
 
 void ProjectsWindow::readEntry(const std::string& path)
 {
-    std::fstream entry(path, std::ios_base::in);
-    std::string str;
-    getline(entry, str);
+    std::fstream entryFile(path, std::ios_base::in);
+    std::string str, str2, str3;
+    std::unique_ptr<Entry> entry = std::make_unique<Entry>();
+    getline(entryFile, str);
+    getline(entryFile, str2);
+    getline(entryFile, str3);
+    entry->setDate(QDate(std::stoi(str3), std::stoi(str2), std::stoi(str)));
+    getline(entryFile, str);
     auto projectIt = findProjectByName(QString::fromStdString(str));
     if(projectIt == projects.end()){
         qDebug()<<"No such prject";
         return;
     }
-
+    entry->setProjectName(QString::fromStdString(str));
+    getline(entryFile, str);
+    entry->setWorkAmount(stoi(str));
+    entries.push_back(std::move(entry));
 }
 
 void ProjectsWindow::showProjectInfo()
