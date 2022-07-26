@@ -4,7 +4,6 @@
 ProjectsWindow::ProjectsWindow(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::ProjectsWindow)
- //   selectedProject(*(new Project()))
 {
     ui->setupUi(this);
     currentDateTime = QDateTime::currentDateTime();
@@ -75,13 +74,8 @@ void ProjectsWindow::calculateProjectDateAndWork(
     int workRemaining = workAmount - workDone;
     workRemaining = checkAndSetProjectWorkRemaining(workRemaining);
 
-    double expectedWorkDone = (double) workAmount / duration * daysGone;
+    double expectedWorkDone = (double) (*projectIt)->getStartDailyWorkAmount() * daysGone;
     double workDoneDifference = (double) expectedWorkDone - workDone;
-    /*
-    if(workDoneDifference > workRemaining){
-        workDoneDifference = workRemaining;
-    }
-    */
     int behindScheduleDays = workDoneDifference / (*projectIt)->getStartDailyWorkAmount();
     int behindScheduleWorkAmount = workDoneDifference;
     double currentDailyWorkAmount = checkAndSetProjectDailyWorkAmount(workDone, daysGone);
@@ -368,63 +362,63 @@ void ProjectsWindow::showSubprojectInfo(
 void ProjectsWindow::createProjectFromFile(const QString& path)
 {
     std::fstream file(path.toStdString(), std::ios_base::in);
-    std::string str;
-    std::string str2;
-    std::string str3;
+    std::string name, description, startDateDay, startDateMonth, startDateYear,
+            endDateDay, endDateMonth, endDateYear, workAmount, dailyReward,
+            chainRewardMultiplier, maxDailyReward, subprojectsAmount, subprojectName,
+            subprojectDateDay, subprojectDateMonth, subprojectDateYear, subprojectWorkAmount;
+
+    getline(file, name);
+    getline(file, description);
+    getline(file, startDateDay);
+    getline(file, startDateMonth);
+    getline(file, startDateYear);
+    getline(file, endDateDay);
+    getline(file, endDateMonth);
+    getline(file, endDateYear);
+    getline(file, workAmount);
+    getline(file, dailyReward);
+    getline(file, chainRewardMultiplier);
+    getline(file, maxDailyReward);
+    getline(file, subprojectsAmount);
+
     std::unique_ptr<Project> project = std::make_unique<Project>();
-    std::getline(file, str);
-    project->setName(QString::fromStdString(str));
-    std::getline(file, str);
-    project->setDescription(QString::fromStdString(str));
-    std::getline(file, str);
-    std::getline(file, str2);
-    std::getline(file, str3);
-    QDate startDate;
-    startDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
-    project->setStartDate(startDate);
-    std::getline(file, str);
-    std::getline(file, str2);
-    std::getline(file, str3);
-    QDate endDate;
-    endDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
-    project->setEndDate(endDate);
-    std::getline(file, str);
-    project->setWorkAmount(stoi(str));
+    project->setName(QString::fromStdString(name));
+    project->setDescription(QString::fromStdString(description));
+
     QDateTime startDateTime, endDateTime;
-    startDateTime.setDate(startDate);
-    endDateTime.setDate(endDate);
-    int duration = startDateTime.daysTo(endDateTime) + 1;
-    project->setStartDailyWorkAmount((double)stod(str) / duration);
-    project->setWorkDone(0);
-    std::getline(file, str);
-    project->setDailyReward(stod(str));
-    project->setCurrentDailyReward(stod(str));
-    project->setCurrentChainLength(0);
-    std::getline(file, str);
-    project->setChainRewardMultiplier(stod(str));
-    project->setPreviousEntry(QDate(1, 1, 1));
-    std::getline(file, str);
-    project->setMaxDailyReward(stod(str));
-    project->setTotalProjectReward(0);
-    std::getline(file, str);
-    int subprojects = stoi(str);
-    for(int i=0;i<subprojects;++i){
+    startDateTime.setDate(QDate(stoi(startDateYear), stoi(startDateMonth), stoi(startDateDay)));
+    endDateTime.setDate(QDate(stoi(endDateYear), stoi(endDateMonth), stoi(endDateDay)));
+    int duration = startDateTime.daysTo(endDateTime);
+
+    project->setStartDate(startDateTime.date());
+    project->setEndDate(endDateTime.date());
+    project->setWorkAmount(stoi(workAmount));
+    project->setStartDailyWorkAmount((double) stoi(workAmount) / duration);
+    //project->setR
+
+
+    project->setDailyReward(stod(dailyReward));
+    project->setChainRewardMultiplier(stod(chainRewardMultiplier));
+    project->setMaxDailyReward(stod(maxDailyReward));
+
+    for(int i = 0; i < stoi(subprojectsAmount); ++i){
+        getline(file, subprojectName);
+        getline(file, subprojectDateDay);
+        getline(file, subprojectDateMonth);
+        getline(file, subprojectDateYear);
+        getline(file, subprojectWorkAmount);
+
         std::unique_ptr<Subproject> subproject = std::make_unique<Subproject>();
-        std::getline(file, str);
-        subproject->setName(QString::fromStdString(str));
-        std::getline(file, str);
-        std::getline(file, str2);
-        std::getline(file, str3);
-        QDate endSubprojectDate;
-        endSubprojectDate.setDate(std::stoi(str3), std::stoi(str2), std::stoi(str));
-        subproject->setDate(endSubprojectDate);
-        subproject->setDone(false);
-        std::getline(file, str);
-        subproject->setWorkAmount(stoi(str));
+        subproject->setName(QString::fromStdString(subprojectName));
+        subproject->setDate(QDate(stoi(subprojectDateYear),stoi(subprojectDateMonth),
+                                  stoi(subprojectDateDay)));
+        subproject->setWorkAmount(stoi(subprojectWorkAmount));
+
         project->addSubproject(std::move(subproject));
     }
+
     projects.push_back(std::move(project));
-    selectProject(projects.end() - 1);
+    selectedProjectIt = projects.end() - 1;
     file.close();
 }
 

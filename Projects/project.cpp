@@ -2,7 +2,10 @@
 
 Project::Project()
 {
-
+    workDone = 0;
+    currentChainLength = 0;
+    totalProjectReward = 0;
+    previousEntry = QDate(1, 1, 1);
 }
 
 void Project::addSubproject(std::unique_ptr<Subproject> subproject)

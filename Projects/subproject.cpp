@@ -2,7 +2,8 @@
 
 Subproject::Subproject()
 {
-
+    done = false;
+    workDone = 0;
 }
 
 void Subproject::setName(const QString& _name)
