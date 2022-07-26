@@ -14,7 +14,7 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 
 
     readEntries("entries");
-    processEntries();
+    processEntries(QDate(currentDateTime.date()));
     calculateProjects();
 
     showProjectInfo();
@@ -52,52 +52,42 @@ void ProjectsWindow::calculateProjects()
 
 void ProjectsWindow::calculateProject(std::vector<std::unique_ptr<Project>>::iterator projectIt)
 {
-    // TODO
-    // Распарсить все это на маленькие функции, еавести порядок с условиями.
-    // Помнить, что в статистику текующий день никак не входит
-    // После ввода данных за текущий день, данные становятся недействительными, поэтому
-    // статистику надо смотреть до ввода данных за текущий день
+    calculateProjectDateAndWork(projectIt);
+    calculateProjectReward(projectIt);
+}
+
+void ProjectsWindow::calculateProjectDateAndWork(
+        std::vector<std::unique_ptr<Project>>::iterator projectIt)
+{
     QDateTime startDate, endDate;
     startDate.setDate((*projectIt)->getStartDate());
     endDate.setDate((*projectIt)->getEndDate());
+
     int duration = startDate.daysTo(endDate) + 1;
     int daysGone = startDate.daysTo(currentDateTime);
-    if(daysGone > duration){
-        daysGone = duration;
-    }
+    daysGone = checkAndSetProjectDaysGoneOrDaysRemaining(daysGone, duration);
+
     int daysRemaining = currentDateTime.daysTo(endDate) + 1;
-    if(daysRemaining < 0){
-        daysRemaining = 0;
-    }
+    daysRemaining = checkAndSetProjectDaysGoneOrDaysRemaining(daysRemaining, duration);
+
     int workAmount = (*projectIt)->getWorkAmount();
     int workDone = (*projectIt)->getWorkDone();
     int workRemaining = workAmount - workDone;
-    double expectedWorkDone = (double)workAmount / duration * daysGone;
-    double workDoneDifference = (double)expectedWorkDone - workDone;
+    workRemaining = checkAndSetProjectWorkRemaining(workRemaining);
+
+    double expectedWorkDone = (double) workAmount / duration * daysGone;
+    double workDoneDifference = (double) expectedWorkDone - workDone;
+    /*
     if(workDoneDifference > workRemaining){
         workDoneDifference = workRemaining;
     }
+    */
     int behindScheduleDays = workDoneDifference / (*projectIt)->getStartDailyWorkAmount();
     int behindScheduleWorkAmount = workDoneDifference;
-    double currentDailyWorkAmount;
-    if(daysGone == 0){
-        currentDailyWorkAmount = workDone;
-    }
-    else{
-        currentDailyWorkAmount = (double)workDone / (daysGone);
-    }
-    double requiredDailyWorkAmount;
-    if(daysRemaining == 0){
-        requiredDailyWorkAmount = -1;
-    }
-    else{
-        requiredDailyWorkAmount = (double)workRemaining / daysRemaining;
-    }
+    double currentDailyWorkAmount = checkAndSetProjectDailyWorkAmount(workDone, daysGone);
+    double requiredDailyWorkAmount =
+            checkAndSetProjectDailyWorkAmount(workRemaining, daysRemaining);
 
-    double currentChainMultiplier = (double)(*projectIt)->getCurrentChainLength() * (double)
-                                 (*projectIt)->getChainRewardMultiplier();
-    double currentDailyReward =
-            (double)(*projectIt)->getDailyReward() * (1 + currentChainMultiplier);
     QDate expectedEndDate;
     if(workDone == 0){
         expectedEndDate = QDate(1, 1, 1);
@@ -108,7 +98,6 @@ void ProjectsWindow::calculateProject(std::vector<std::unique_ptr<Project>>::ite
         expectedEndDate = expectedEndDateTime.date();
     }
 
-
     (*projectIt)->setBehindScheduleDays(behindScheduleDays);
     (*projectIt)->setBehindScheduleWorkAmount(behindScheduleWorkAmount);
     (*projectIt)->setExpectedEndDate(expectedEndDate);
@@ -118,14 +107,55 @@ void ProjectsWindow::calculateProject(std::vector<std::unique_ptr<Project>>::ite
     (*projectIt)->setWorkRemaining(workRemaining);
     (*projectIt)->setCurrentDailyWorkAmount(currentDailyWorkAmount);
     (*projectIt)->setRequiredDailyWorkAmount(requiredDailyWorkAmount);
+}
 
+void ProjectsWindow::calculateProjectReward(
+        std::vector<std::unique_ptr<Project>>::iterator projectIt)
+{
+    double currentChainMultiplier = (double)(*projectIt)->getCurrentChainLength() * (double)
+                                 (*projectIt)->getChainRewardMultiplier();
+    double currentDailyReward =
+            (double)(*projectIt)->getDailyReward() * (1 + currentChainMultiplier);
     (*projectIt)->setCurrentDailyReward(currentDailyReward);
 }
 
-void ProjectsWindow::processEntries()
+int ProjectsWindow::checkAndSetProjectDaysGoneOrDaysRemaining(
+        const int& days, const int& duration) const
+{
+    if(days < 0){
+        return 0;
+    }
+    else if(days > duration){
+        return duration;
+    }
+    return days;
+}
+
+int ProjectsWindow::checkAndSetProjectWorkRemaining(const int& workRemaining) const
+{
+    if(workRemaining < 0){
+        return 0;
+    }
+    return workRemaining;
+}
+
+double ProjectsWindow::checkAndSetProjectDailyWorkAmount(
+        const int& work, const int& days) const
+{
+    if(days == 0){
+        return 0;
+    }
+    else{
+        return (double) work / days;
+    }
+}
+
+void ProjectsWindow::processEntries(const QDate& maxDate)
 {
     for(auto it = entries.begin(); it != entries.end(); ++it){
-        processEntry(it);
+        if((*it)->getDate() <= maxDate){
+            processEntry(it);
+        }
     }
 }
 

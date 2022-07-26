@@ -49,11 +49,17 @@ private:
 
     void readEntries(const QString& path);
     void readEntry(const std::string& path);
-    void processEntries();
+    void processEntries(const QDate& maxDate);
     void processEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
 
     void calculateProjects();
     void calculateProject(std::vector<std::unique_ptr<Project>>::iterator projectIt);
+    void calculateProjectDateAndWork(std::vector<std::unique_ptr<Project>>::iterator projectIt);
+    void calculateProjectReward(std::vector<std::unique_ptr<Project>>::iterator projectIt);
+
+    int checkAndSetProjectDaysGoneOrDaysRemaining(const int& days, const int& duration) const;
+    int checkAndSetProjectWorkRemaining(const int& workRemaining) const;
+    double checkAndSetProjectDailyWorkAmount(const int& work, const int& days) const;
 
     QDateTime currentDateTime;
 };
