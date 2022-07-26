@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     projectsWindow = new ProjectsWindow;
 
     connect(ui->projectsWindowButton, SIGNAL(clicked()), this, SLOT(openProjectsWindow()));
+    connect(projectsWindow, SIGNAL(openMainMenu()), this, SLOT(show()));
 }
 
 MainWindow::~MainWindow()
@@ -18,5 +19,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::openProjectsWindow()
 {
+    hide();
     projectsWindow->show();
 }

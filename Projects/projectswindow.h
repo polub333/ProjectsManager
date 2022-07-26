@@ -62,6 +62,13 @@ private:
     double checkAndSetProjectDailyWorkAmount(const int& work, const int& days) const;
 
     QDateTime currentDateTime;
+
+private slots:
+    void addNewEntry();
+    void mainMenuButtonClicked();
+
+signals:
+    void openMainMenu();
 };
 
 #endif // PROJECTSWINDOW_H

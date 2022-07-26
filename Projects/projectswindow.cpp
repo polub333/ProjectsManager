@@ -8,6 +8,9 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui->setupUi(this);
     currentDateTime = QDateTime::currentDateTime();
 
+    connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
+    connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
+
     createProjectFromFile("projects/project1.txt");
     createProjectFromFile("projects/project2.txt");
 
@@ -23,6 +26,17 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 ProjectsWindow::~ProjectsWindow()
 {
     delete ui;
+}
+
+void ProjectsWindow::mainMenuButtonClicked()
+{
+    hide();
+    emit openMainMenu();
+}
+
+void ProjectsWindow::addNewEntry()
+{
+
 }
 
 void ProjectsWindow::selectProject(
@@ -394,9 +408,6 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
     project->setEndDate(endDateTime.date());
     project->setWorkAmount(stoi(workAmount));
     project->setStartDailyWorkAmount((double) stoi(workAmount) / duration);
-    //project->setR
-
-
     project->setDailyReward(stod(dailyReward));
     project->setChainRewardMultiplier(stod(chainRewardMultiplier));
     project->setMaxDailyReward(stod(maxDailyReward));
