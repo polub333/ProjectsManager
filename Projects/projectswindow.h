@@ -2,6 +2,7 @@
 #define PROJECTSWINDOW_H
 
 #include <QWidget>
+#include <QMessageBox>
 
 #include <vector>
 #include <memory>
@@ -34,7 +35,15 @@ private:
 
     std::vector<std::unique_ptr<Entry>> entries;
 
+    void updateData();
+    void readData();
+    void saveProjects();
+    void saveProject(std::vector<std::unique_ptr<Project>>::iterator projectIt);
+    void saveEntries();
+    void saveEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
+
     void showProjectInfo();
+    void showCurrentDate();
     void showProjectNameInfo();
     void showProjectDateInfo();
     void showProjectWorkInfo();
@@ -45,6 +54,7 @@ private:
 
     void selectProject(const std::vector<std::unique_ptr<Project>>::iterator iterator);
     void createTestProject();
+    void readProjects();
     void createProjectFromFile(const QString& path);
 
     void readEntries(const QString& path);
@@ -60,12 +70,15 @@ private:
     int checkAndSetProjectDaysGoneOrDaysRemaining(const int& days, const int& duration) const;
     int checkAndSetProjectWorkRemaining(const int& workRemaining) const;
     double checkAndSetProjectDailyWorkAmount(const int& work, const int& days) const;
+    bool isEntryDataValid(const int& day, const int& month,
+                          const int& year, const int& work) const;
 
     QDateTime currentDateTime;
 
 private slots:
     void addNewEntry();
     void mainMenuButtonClicked();
+    void saveData();
 
 signals:
     void openMainMenu();

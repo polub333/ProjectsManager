@@ -9,23 +9,119 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     currentDateTime = QDateTime::currentDateTime();
 
     connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
+    connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
 
-    createProjectFromFile("projects/project1.txt");
-    createProjectFromFile("projects/project2.txt");
-
-
-    readEntries("entries");
+    readData();
     processEntries(QDate(currentDateTime.date()));
     calculateProjects();
 
     showProjectInfo();
 
+/*
+    readEntries("entries");
+    processEntries(QDate(currentDateTime.date()));
+    calculateProjects();
+
+    showProjectInfo();
+*/
 }
 
 ProjectsWindow::~ProjectsWindow()
 {
     delete ui;
+}
+
+void ProjectsWindow::updateData()
+{
+    saveData();
+    projects.clear();
+    entries.clear();
+    readData();
+    //createProjectFromFile("projects/project1.txt");
+    //createProjectFromFile("projects/project2.txt");
+    //readEntries("entries");
+
+    currentDateTime = QDateTime::currentDateTime();
+
+    processEntries(QDate(currentDateTime.date()));
+    calculateProjects();
+
+    showProjectInfo();
+}
+
+void ProjectsWindow::readData()
+{
+    readProjects();
+    readEntries("entries");
+}
+
+void ProjectsWindow::saveData()
+{
+    saveProjects();
+    saveEntries();
+}
+
+void ProjectsWindow::saveProjects()
+{
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        saveProject(it);
+    }
+}
+
+void ProjectsWindow::saveProject(std::vector<std::unique_ptr<Project>>::iterator projectIt)
+{
+    QString path = "projects/" + (*projectIt)->getName() + ".txt";
+    std::fstream file(path.toStdString(), std::ios_base::out);
+    file << ((*projectIt)->getName()).toStdString() << std::endl;
+    file << ((*projectIt)->getDescription()).toStdString() << std::endl;
+    QDate startDate, endDate;
+    startDate = (*projectIt)->getStartDate();
+    endDate = (*projectIt)->getEndDate();
+    file << startDate.day() << std::endl;
+    file << startDate.month() << std::endl;
+    file << startDate.year() << std::endl;
+    file << endDate.day() << std::endl;
+    file << endDate.month() << std::endl;
+    file << endDate.year() << std::endl;
+    file << (*projectIt)->getWorkAmount() << std::endl;
+    file << (*projectIt)->getDailyReward() << std::endl;
+    file << (*projectIt)->getChainRewardMultiplier() << std::endl;
+    file << (*projectIt)->getMaxDailyReward() << std::endl;
+
+    auto begin = (*projectIt)->getSubprojectsBeginIterator();
+    auto end = (*projectIt)->getSubprojectsEndIterator();
+    file << end - begin << std::endl;
+    for(auto it = begin; it != end; ++it){
+        file << ((*it)->getName()).toStdString() << std::endl;
+        QDate date = (*it)->getDate();
+        file << date.day() << std::endl;
+        file << date.month() << std::endl;
+        file << date.year() << std::endl;
+        file << (*it)->getWorkAmount() << std::endl;
+    }
+    file.close();
+}
+
+void ProjectsWindow::saveEntries()
+{
+    std::fstream file("Entries/entries.txt", std::ios_base::out);
+    file.close();
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        saveEntry(it);
+    }
+}
+
+void ProjectsWindow::saveEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt)
+{
+    std::fstream file("Entries/entries.txt", std::ios_base::app);
+    QDate date = (*entryIt)->getDate();
+    file << date.day() << std::endl;
+    file << date.month() << std::endl;
+    file << date.year() << std::endl;
+    file <<((*entryIt)->getProjectName()).toStdString() << std::endl;
+    file << (*entryIt)->getWorkAmount() << std::endl;
+    file.close();
 }
 
 void ProjectsWindow::mainMenuButtonClicked()
@@ -36,7 +132,23 @@ void ProjectsWindow::mainMenuButtonClicked()
 
 void ProjectsWindow::addNewEntry()
 {
-
+    std::unique_ptr<Entry> entry = std::make_unique<Entry>();
+    int day, month, year, work;
+    day = (ui->dateDayLineEdit->text()).toInt();
+    month = (ui->dateMonthLineEdit->text()).toInt();
+    year = (ui->dateYearLineEdit->text()).toInt();
+    work = (ui->workDoneLineEdit->text()).toInt();
+    if(!isEntryDataValid(day, month, year, work)){
+        QMessageBox msg(QMessageBox::Critical, "Invalid Data",
+                        "Some of the entered values are invalid", QMessageBox::Ok);
+        msg.exec();
+        return;
+    }
+    entry->setProjectName((*selectedProjectIt)->getName());
+    entry->setDate(QDate(year, month, day));
+    entry->setWorkAmount(work);
+    entries.push_back(std::move(entry));
+    updateData();
 }
 
 void ProjectsWindow::selectProject(
@@ -158,6 +270,15 @@ double ProjectsWindow::checkAndSetProjectDailyWorkAmount(
     }
 }
 
+bool ProjectsWindow::isEntryDataValid(const int& day, const int& month,
+                                      const int& year, const int& work) const
+{
+    if(!QDate::isValid(year, month, day) || work <= 0){
+        return false;
+    }
+    return true;
+}
+
 void ProjectsWindow::processEntries(const QDate& maxDate)
 {
     for(auto it = entries.begin(); it != entries.end(); ++it){
@@ -180,6 +301,7 @@ void ProjectsWindow::processEntry(
         qDebug()<<"No such project from entry projectName";
         return;
     }
+    qDebug()<<(*projectIt)->getWorkDone()<<(*entryIt)->getWorkAmount();
     (*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
     QDateTime previousEntryDate, currentEntryDate;
     previousEntryDate.setDate((*projectIt)->getPreviousEntry());
@@ -216,6 +338,9 @@ void ProjectsWindow::readEntry(const std::string& path)
     while(!entryFile.eof()){
         std::unique_ptr<Entry> entry = std::make_unique<Entry>();
         getline(entryFile, str);
+        if(str == ""){
+            break;
+        }
         getline(entryFile, str2);
         getline(entryFile, str3);
         entry->setDate(QDate(std::stoi(str3), std::stoi(str2), std::stoi(str)));
@@ -235,11 +360,19 @@ void ProjectsWindow::readEntry(const std::string& path)
 
 void ProjectsWindow::showProjectInfo()
 {
+    showCurrentDate();
     showProjectNameInfo();
     showProjectDateInfo();
     showProjectWorkInfo();
     showProjectRewardInfo();
     showProjectSubprojects();
+}
+
+void ProjectsWindow::showCurrentDate()
+{
+    ui->dateDayLineEdit->setText(QString::number(currentDateTime.date().day()));
+    ui->dateMonthLineEdit->setText(QString::number(currentDateTime.date().month()));
+    ui->dateYearLineEdit->setText(QString::number(currentDateTime.date().year()));
 }
 
 void ProjectsWindow::showProjectNameInfo()
@@ -373,6 +506,15 @@ void ProjectsWindow::showSubprojectInfo(
     ui->subprojectsLayout->addWidget(widget);
 }
 
+void ProjectsWindow::readProjects()
+{
+    for(std::filesystem::recursive_directory_iterator it("Projects"), end;it != end; ++it){
+        if(it->path().extension() == ".txt"){
+            createProjectFromFile(QString::fromStdString(it->path().string()));
+        }
+    }
+}
+
 void ProjectsWindow::createProjectFromFile(const QString& path)
 {
     std::fstream file(path.toStdString(), std::ios_base::in);
@@ -402,13 +544,14 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
     QDateTime startDateTime, endDateTime;
     startDateTime.setDate(QDate(stoi(startDateYear), stoi(startDateMonth), stoi(startDateDay)));
     endDateTime.setDate(QDate(stoi(endDateYear), stoi(endDateMonth), stoi(endDateDay)));
-    int duration = startDateTime.daysTo(endDateTime);
+    int duration = startDateTime.daysTo(endDateTime) + 1;
 
     project->setStartDate(startDateTime.date());
     project->setEndDate(endDateTime.date());
     project->setWorkAmount(stoi(workAmount));
     project->setStartDailyWorkAmount((double) stoi(workAmount) / duration);
     project->setDailyReward(stod(dailyReward));
+    project->setCurrentDailyReward(project->getDailyReward());
     project->setChainRewardMultiplier(stod(chainRewardMultiplier));
     project->setMaxDailyReward(stod(maxDailyReward));
 
