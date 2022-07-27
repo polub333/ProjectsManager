@@ -29,6 +29,8 @@ public:
 private:
     Ui::ProjectsWindow *ui;
 
+    QDateTime currentDateTime;
+
     std::vector<std::unique_ptr<Project>> projects;
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
     std::vector<std::unique_ptr<Project>>::iterator findProjectByName(const QString& name);
@@ -42,6 +44,9 @@ private:
     void saveEntries();
     void saveEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
 
+
+    void updateScreen();
+    void showProjects();
     void showProjectInfo();
     void showCurrentDate();
     void showProjectNameInfo();
@@ -73,7 +78,7 @@ private:
     bool isEntryDataValid(const int& day, const int& month,
                           const int& year, const int& work) const;
 
-    QDateTime currentDateTime;
+    void clearLayout(QLayout* layout);
 
 private slots:
     void addNewEntry();

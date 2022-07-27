@@ -16,7 +16,7 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     processEntries(QDate(currentDateTime.date()));
     calculateProjects();
 
-    showProjectInfo();
+    updateScreen();
 
 /*
     readEntries("entries");
@@ -47,7 +47,7 @@ void ProjectsWindow::updateData()
     processEntries(QDate(currentDateTime.date()));
     calculateProjects();
 
-    showProjectInfo();
+    updateScreen();
 }
 
 void ProjectsWindow::readData()
@@ -155,6 +155,7 @@ void ProjectsWindow::selectProject(
         const std::vector<std::unique_ptr<Project>>::iterator iterator)
 {
     selectedProjectIt = iterator;
+    updateScreen();
 }
 
 std::vector<std::unique_ptr<Project>>::iterator
@@ -358,6 +359,32 @@ void ProjectsWindow::readEntry(const std::string& path)
     entryFile.close();
 }
 
+void ProjectsWindow::updateScreen()
+{
+    showProjects();
+    showProjectInfo();
+}
+
+void ProjectsWindow::showProjects()
+{
+    clearLayout(ui->projectsLayout);
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        QHBoxLayout* layout = new QHBoxLayout();
+        QLabel* percDone = new QLabel(layout->widget());
+        percDone->setText(QString::number((double) (*it)->getWorkDone() /
+                                                   (*it)->getWorkAmount() * 100) + " %");
+        QLabel* name = new QLabel(layout->widget());
+        name->setText((*it)->getName());
+        QPushButton* button = new QPushButton(layout->widget());
+        button->setText("Select");
+        connect(button, &QPushButton::clicked, this, [this, it](){this->selectProject(it);});
+        layout->addWidget(name);
+        layout->addWidget(percDone);
+        layout->addWidget(button);
+        ui->projectsLayout->addLayout(layout);
+    }
+}
+
 void ProjectsWindow::showProjectInfo()
 {
     showCurrentDate();
@@ -448,6 +475,7 @@ void ProjectsWindow::showProjectRewardInfo()
 
 void ProjectsWindow::showProjectSubprojects()
 {
+    clearLayout(ui->subprojectsLayout);
     auto begin = (*selectedProjectIt)->getSubprojectsBeginIterator();
     auto end = (*selectedProjectIt)->getSubprojectsEndIterator();
     for(auto it = begin; it != end; ++it){
@@ -618,4 +646,20 @@ void ProjectsWindow::createTestProject()
     project->addSubproject(std::move(sub2));
 
     projects.push_back(std::move(project));
+}
+
+void ProjectsWindow::clearLayout(QLayout* layout)
+{
+    QLayoutItem* lItem = layout->takeAt(0);
+    while(lItem != nullptr){
+        if(lItem->layout() != nullptr){
+            clearLayout(static_cast<QLayout*>(lItem));
+            delete static_cast<QLayout*>(lItem);
+        }
+        else{
+            delete lItem->widget();
+        }
+        lItem = layout->takeAt(0);
+    }
+    delete lItem;
 }
