@@ -9,6 +9,8 @@ class Subproject
 public:
     Subproject();
 
+    void addWorkDone(const int& work);
+
     void setName(const QString& _name);
     void setDate(const QDate& _date);
     void setWorkAmount(const int& _workAmount);

@@ -6,6 +6,14 @@ Subproject::Subproject()
     workDone = 0;
 }
 
+void Subproject::addWorkDone(const int& work)
+{
+    workDone += work;
+    if(workDone == workAmount){
+        done = true;
+    }
+}
+
 void Subproject::setName(const QString& _name)
 {
     name = _name;

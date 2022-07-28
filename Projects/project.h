@@ -19,6 +19,7 @@ public:
     std::vector<std::unique_ptr<Subproject>>::const_iterator getSubprojectsEndIterator() const;
 
     void addReward(const double& reward);
+    void addWorkDone(const int& _work);
 
     void setName(const QString& _name);
     void setDescription(const QString& _description);
@@ -46,6 +47,8 @@ public:
     void setPreviousEntry(const QDate& _previousEntry);
     void setTotalProjectReward(const double& _totalProjectReward);
 
+    void setDone(const bool& _done);
+
     QString getName() const;
     QString getDescription() const;
 
@@ -71,6 +74,8 @@ public:
     int getCurrentChainLength() const;
     QDate getPreviousEntry() const;
     double getTotalProjectReward() const;
+
+    bool isDone() const;
 
 private:
     std::vector<std::unique_ptr<Subproject>> subprojects;
@@ -101,6 +106,7 @@ private:
     QDate previousEntry;
     double totalProjectReward;
 
+    bool done;
 };
 
 #endif // PROJECT_H

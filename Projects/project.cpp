@@ -6,6 +6,7 @@ Project::Project()
     currentChainLength = 0;
     totalProjectReward = 0;
     previousEntry = QDate(1, 1, 1);
+    done = false;
 }
 
 void Project::addSubproject(std::unique_ptr<Subproject> subproject)
@@ -28,6 +29,27 @@ Project::getSubprojectsEndIterator() const
 void Project::addReward(const double& reward)
 {
     totalProjectReward += reward;
+}
+
+void Project::addWorkDone(const int& _work)
+{
+    int work = _work;
+    workDone += work;
+    if(workDone >= workAmount){
+        workDone = workAmount;
+        done = true;
+    }
+    for(auto it = subprojects.begin(); it != subprojects.end(); ++it){
+        int workRemaining = (*it)->getWorkAmount() - (*it)->getWorkDone();
+        if(workRemaining >= work){
+            (*it)->addWorkDone(work);
+            break;
+        }
+        else{
+            (*it)->addWorkDone(workRemaining);
+            work -= workRemaining;
+        }
+    }
 }
 
 void Project::setName(const QString& _name)
@@ -140,6 +162,11 @@ void Project::setTotalProjectReward(const double& _totalProjectReward)
     totalProjectReward = _totalProjectReward;
 }
 
+void Project::setDone(const bool& _done)
+{
+    done = _done;
+}
+
 QString Project::getName() const
 {
     return name;
@@ -250,3 +277,7 @@ double Project::getTotalProjectReward() const
     return totalProjectReward;
 }
 
+bool Project::isDone() const
+{
+    return done;
+}

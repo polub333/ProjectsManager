@@ -303,7 +303,8 @@ void ProjectsWindow::processEntry(
         return;
     }
     qDebug()<<(*projectIt)->getWorkDone()<<(*entryIt)->getWorkAmount();
-    (*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
+    //(*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
+    (*projectIt)->addWorkDone((*entryIt)->getWorkAmount());
     QDateTime previousEntryDate, currentEntryDate;
     previousEntryDate.setDate((*projectIt)->getPreviousEntry());
     currentEntryDate.setDate((*entryIt)->getDate());
