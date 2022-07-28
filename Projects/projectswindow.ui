@@ -95,6 +95,9 @@
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
            <widget class="QLabel" name="label_6">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string>B. Schedule (work)</string>
             </property>

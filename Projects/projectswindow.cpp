@@ -375,6 +375,9 @@ void ProjectsWindow::showProjects()
         percDone->setText(QString::number((double) (*it)->getWorkDone() /
                                                    (*it)->getWorkAmount() * 100) + " %");
         QLabel* name = new QLabel(layout->widget());
+        if((*it)->isDone()){
+            name->setStyleSheet("color : green");
+        }
         name->setText((*it)->getName());
         QPushButton* button = new QPushButton(layout->widget());
         button->setText("Select");
@@ -525,6 +528,15 @@ void ProjectsWindow::showSubprojectInfo(
     workDoneStaticLabel->setText("Work Done");
     workStaticLayout->addWidget(workDoneStaticLabel);
     workDinamicLayout->addWidget(workDoneLabel);
+
+    if((*subprojectIt)->isDone()){
+        nameLabel->setStyleSheet("color: green");
+        dateLabel->setStyleSheet("color: green");
+        workAmountLabel->setStyleSheet("color: green");
+        workAmountStaticLabel->setStyleSheet("color: green");
+        workDoneLabel->setStyleSheet("color: green");
+        workDoneStaticLabel->setStyleSheet("color: green");
+    }
 
     workLayout->addLayout(workStaticLayout);
     workLayout->addLayout(workDinamicLayout);

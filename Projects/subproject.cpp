@@ -58,3 +58,8 @@ int Subproject::getWorkDone() const
 {
     return workDone;
 }
+
+bool Subproject::isDone() const
+{
+    return done;
+}

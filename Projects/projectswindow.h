@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QMessageBox>
+#include <QStyle>
 
 #include <vector>
 #include <memory>
