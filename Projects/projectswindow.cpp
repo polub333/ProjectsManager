@@ -9,13 +9,13 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui->subprojectsLayout->setAlignment(Qt::AlignTop);
     ui->projectsLayout->setAlignment(Qt::AlignTop);
 
-    scene1 = new Scene();
-    scene2 = new Scene();
-    ui->burndownGraphicsView->setScene(scene1);
-    ui->DailyGraphicsView->setScene(scene2);
-    scene1->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
-    scene2->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
-    scene1->draw();
+    burnDownScene = new BurnDownScene();
+    dailyWorkScene = new DailyWorkScene();
+    ui->burnDownGraphicsView->setScene(burnDownScene);
+    ui->dailyWorkGraphicsView->setScene(dailyWorkScene);
+    burnDownScene->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
+    dailyWorkScene->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
+    burnDownScene->draw();
 
     sceneWidth = 196-1;
     sceneHeight = 126-1;
@@ -51,8 +51,10 @@ void ProjectsWindow::updateData()
     saveData();
     projects.clear();
     entries.clear();
-    scene1->clear();
-    scene1->deletePoints();
+    burnDownScene->clear();
+    burnDownScene->deletePoints();
+    dailyWorkScene->clear();
+    dailyWorkScene->deletePoints();
     readData();
 
     currentDateTime = QDateTime::currentDateTime();
@@ -118,6 +120,7 @@ void ProjectsWindow::saveProject(std::vector<std::unique_ptr<Project>>::iterator
 
 void ProjectsWindow::saveEntries()
 {
+    uniteSameDayEntries();
     std::fstream file("Entries/entries.txt", std::ios_base::out);
     file.close();
     for(auto it = entries.begin(); it != entries.end(); ++it){
@@ -241,8 +244,10 @@ void ProjectsWindow::calculateProjectDateAndWork(
     (*projectIt)->setWorkRemaining(workRemaining);
     (*projectIt)->setCurrentDailyWorkAmount(currentDailyWorkAmount);
     (*projectIt)->setRequiredDailyWorkAmount(requiredDailyWorkAmount);
-    scene1->clear();
-    scene1->deletePoints();
+    burnDownScene->clear();
+    burnDownScene->deletePoints();
+    dailyWorkScene->clear();
+    dailyWorkScene->deletePoints();
     createDiagramPoints();
 }
 
@@ -293,6 +298,9 @@ bool ProjectsWindow::isEntryDataValid(const int& day, const int& month,
     if(!QDate::isValid(year, month, day) || work <= 0){
         return false;
     }
+    if(QDate(year, month, day) > currentDateTime.date()){
+        return false;
+    }
     return true;
 }
 
@@ -339,6 +347,8 @@ void ProjectsWindow::processEntry(
 
 void ProjectsWindow::createDiagramPoints()
 {
+    burnDownScene->deletePoints();
+    dailyWorkScene->deletePoints();
     int workAmount = (*selectedProjectIt)->getWorkAmount();
     int workRemaining = workAmount;
     for(auto it = entries.begin(); it != entries.end(); ++it){
@@ -352,7 +362,9 @@ void ProjectsWindow::createDiagramPoints()
             workRemaining -= (*it)->getWorkAmount();
             double x = (double) entryDuration / projectDuration * sceneWidth;
             double y = sceneHeight - ((double) workRemaining / workAmount * sceneHeight);
-            scene1->addPoint(QPointF(x, y));
+            burnDownScene->addPoint(QPointF(x, y));
+            dailyWorkScene->addPoint(QPointF(x, (*it)->getWorkAmount()));
+            qDebug()<<(*it)->getWorkAmount();
         }
     }
 }
@@ -365,6 +377,7 @@ void ProjectsWindow::readEntries(const QString& path)
             readEntry(it->path().string());
         }
     }
+    uniteSameDayEntries();
 }
 
 void ProjectsWindow::readEntry(const std::string& path)
@@ -394,9 +407,24 @@ void ProjectsWindow::readEntry(const std::string& path)
     entryFile.close();
 }
 
+void ProjectsWindow::uniteSameDayEntries()
+{
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        for(auto _it = entries.begin(); _it != it; ++_it){
+            if((*_it)->getDate() == (*it)->getDate()){
+                (*_it)->setWorkAmount((*_it)->getWorkAmount() + (*it)->getWorkAmount());
+                entries.erase(it);
+                --it;
+                break;
+            }
+        }
+    }
+}
+
 void ProjectsWindow::updateScreen()
 {
     showProjects();
+    createDiagramPoints();
     showProjectInfo();
 }
 
@@ -426,6 +454,7 @@ void ProjectsWindow::showProjects()
 void ProjectsWindow::showProjectInfo()
 {
     showBurnDownDiagram();
+    showDailyWorkDiagram();
     showCurrentDate();
     showProjectNameInfo();
     showProjectDateInfo();
@@ -436,8 +465,14 @@ void ProjectsWindow::showProjectInfo()
 
 void ProjectsWindow::showBurnDownDiagram()
 {
-    scene1->clear();
-    scene1->draw();
+    burnDownScene->clear();
+    burnDownScene->draw();
+}
+
+void ProjectsWindow::showDailyWorkDiagram()
+{
+    dailyWorkScene->clear();
+    dailyWorkScene->draw();
 }
 
 void ProjectsWindow::showCurrentDate()

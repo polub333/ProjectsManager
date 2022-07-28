@@ -1,32 +1,32 @@
-#include "scene.h"
+#include "burndownscene.h"
 
-Scene::Scene()
+BurnDownScene::BurnDownScene()
 {
 
 }
 
-void Scene::draw()
+void BurnDownScene::draw()
 {
     drawBurnDownLine();
     drawPointsAndLines();
 }
 
-void Scene::addPoint(const QPointF& point)
+void BurnDownScene::addPoint(const QPointF& point)
 {
     points.push_back(point);
 }
 
-void Scene::deletePoints()
+void BurnDownScene::deletePoints()
 {
     points.clear();
 }
 
-void Scene::drawBurnDownLine()
+void BurnDownScene::drawBurnDownLine()
 {
     addLine(0, 0, 196, 126, QPen(Qt::blue));
 }
 
-void Scene::drawPointsAndLines()
+void BurnDownScene::drawPointsAndLines()
 {
     QPointF previousPoint;
     auto it = points.begin();
@@ -44,12 +44,12 @@ void Scene::drawPointsAndLines()
     }
 }
 
-void Scene::drawPoint(const qreal& x, const qreal& y)
+void BurnDownScene::drawPoint(const qreal& x, const qreal& y)
 {
     addRect(x-2, y-2, 5, 5, QPen(Qt::NoPen), QBrush(Qt::red));
 }
 
-void Scene::drawLine(const QPointF& point1, const QPointF& point2)
+void BurnDownScene::drawLine(const QPointF& point1, const QPointF& point2)
 {
     addLine(point1.x(), point1.y(), point2.x(), point2.y(), QPen(Qt::red));
 }

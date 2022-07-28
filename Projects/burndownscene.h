@@ -1,15 +1,15 @@
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef BURNDOWNSCENE_H
+#define BURNDOWNSCENE_H
 
 #include <QGraphicsScene>
 
 #include <vector>
 
-class Scene: public QGraphicsScene
+class BurnDownScene: public QGraphicsScene
 {
     Q_OBJECT
 public:
-    Scene();
+    BurnDownScene();
     void draw();
     void addPoint(const QPointF& point);
     void deletePoints();
@@ -22,4 +22,4 @@ private:
     void drawLine(const QPointF& point1, const QPointF& point2);
 };
 
-#endif // SCENE_H
+#endif // BURNDOWNSCENE_H

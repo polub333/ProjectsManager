@@ -6,6 +6,7 @@
 #include <QStyle>
 
 #include <vector>
+#include <algorithm>
 #include <memory>
 #include <fstream>
 #include <filesystem>
@@ -14,7 +15,8 @@
 #include <Projects/project.h>
 #include <Projects/subproject.h>
 #include <Projects/entry.h>
-#include <Projects/scene.h>
+#include <Projects/burndownscene.h>
+#include <Projects/dailyworkscene.h>
 
 namespace Ui {
 class ProjectsWindow;
@@ -30,10 +32,10 @@ public:
 
 private:
     Ui::ProjectsWindow *ui;
-    Scene* scene1;
+    BurnDownScene* burnDownScene;
     int sceneWidth;
     int sceneHeight;
-    Scene* scene2;
+    DailyWorkScene* dailyWorkScene;
 
     QDateTime currentDateTime;
 
@@ -55,6 +57,7 @@ private:
     void showProjects();
     void showProjectInfo();
     void showBurnDownDiagram();
+    void showDailyWorkDiagram();
     void showCurrentDate();
     void showProjectNameInfo();
     void showProjectDateInfo();
@@ -71,6 +74,7 @@ private:
 
     void readEntries(const QString& path);
     void readEntry(const std::string& path);
+    void uniteSameDayEntries();
     void processEntries(const QDate& maxDate);
     void processEntry(std::vector<std::unique_ptr<Entry>>::iterator entryIt);
     void createDiagramPoints();

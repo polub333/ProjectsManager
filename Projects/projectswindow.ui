@@ -599,7 +599,7 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QGraphicsView" name="burndownGraphicsView">
+  <widget class="QGraphicsView" name="burnDownGraphicsView">
    <property name="geometry">
     <rect>
      <x>200</x>
@@ -617,7 +617,7 @@
     </rectf>
    </property>
   </widget>
-  <widget class="QGraphicsView" name="DailyGraphicsView">
+  <widget class="QGraphicsView" name="dailyWorkGraphicsView">
    <property name="geometry">
     <rect>
      <x>410</x>
