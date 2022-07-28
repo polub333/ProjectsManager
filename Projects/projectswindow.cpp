@@ -25,20 +25,13 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
-
     readData();
-    processEntries(QDate(currentDateTime.date()));
-    calculateProjects();
+    selectedProjectIt = projects.end();
 
+    processEntries(QDate(currentDateTime.date()));
+
+    calculateProjects();
     updateScreen();
-
-/*
-    readEntries("entries");
-    processEntries(QDate(currentDateTime.date()));
-    calculateProjects();
-
-    showProjectInfo();
-*/
 }
 
 ProjectsWindow::~ProjectsWindow()
@@ -48,6 +41,7 @@ ProjectsWindow::~ProjectsWindow()
 
 void ProjectsWindow::updateData()
 {
+    QString currentSelectedProjectName = (*selectedProjectIt)->getName();
     saveData();
     projects.clear();
     entries.clear();
@@ -56,7 +50,7 @@ void ProjectsWindow::updateData()
     dailyWorkScene->clear();
     dailyWorkScene->deletePoints();
     readData();
-
+    selectedProjectIt = findProjectByName(currentSelectedProjectName);
     currentDateTime = QDateTime::currentDateTime();
 
     processEntries(QDate(currentDateTime.date()));
@@ -148,6 +142,9 @@ void ProjectsWindow::mainMenuButtonClicked()
 
 void ProjectsWindow::addNewEntry()
 {
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
     std::unique_ptr<Entry> entry = std::make_unique<Entry>();
     int day, month, year, work;
     day = (ui->dateDayLineEdit->text()).toInt();
@@ -244,11 +241,6 @@ void ProjectsWindow::calculateProjectDateAndWork(
     (*projectIt)->setWorkRemaining(workRemaining);
     (*projectIt)->setCurrentDailyWorkAmount(currentDailyWorkAmount);
     (*projectIt)->setRequiredDailyWorkAmount(requiredDailyWorkAmount);
-    burnDownScene->clear();
-    burnDownScene->deletePoints();
-    dailyWorkScene->clear();
-    dailyWorkScene->deletePoints();
-    createDiagramPoints();
 }
 
 void ProjectsWindow::calculateProjectReward(
@@ -347,6 +339,9 @@ void ProjectsWindow::processEntry(
 
 void ProjectsWindow::createDiagramPoints()
 {
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
     burnDownScene->deletePoints();
     dailyWorkScene->deletePoints();
     int workAmount = (*selectedProjectIt)->getWorkAmount();
@@ -364,7 +359,6 @@ void ProjectsWindow::createDiagramPoints()
             double y = sceneHeight - ((double) workRemaining / workAmount * sceneHeight);
             burnDownScene->addPoint(QPointF(x, y));
             dailyWorkScene->addPoint(QPointF(x, (*it)->getWorkAmount()));
-            qDebug()<<(*it)->getWorkAmount();
         }
     }
 }
@@ -396,7 +390,7 @@ void ProjectsWindow::readEntry(const std::string& path)
         getline(entryFile, str);
         auto projectIt = findProjectByName(QString::fromStdString(str));
         if(projectIt == projects.end()){
-            qDebug()<<"No such prject";
+            qDebug()<<"No such project";
             return;
         }
         entry->setProjectName(QString::fromStdString(str));
@@ -411,7 +405,8 @@ void ProjectsWindow::uniteSameDayEntries()
 {
     for(auto it = entries.begin(); it != entries.end(); ++it){
         for(auto _it = entries.begin(); _it != it; ++_it){
-            if((*_it)->getDate() == (*it)->getDate()){
+            if(((*_it)->getDate() == (*it)->getDate()) &&
+               ((*_it)->getProjectName() == (*it)->getProjectName())){
                 (*_it)->setWorkAmount((*_it)->getWorkAmount() + (*it)->getWorkAmount());
                 entries.erase(it);
                 --it;
@@ -453,6 +448,9 @@ void ProjectsWindow::showProjects()
 
 void ProjectsWindow::showProjectInfo()
 {
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
     showBurnDownDiagram();
     showDailyWorkDiagram();
     showCurrentDate();
@@ -499,9 +497,15 @@ void ProjectsWindow::showProjectDateInfo()
     QString stringEndDate = QString::number(endDate.day()) + "/" +
                             QString::number(endDate.month()) + "/" +
                             QString::number(endDate.year());
-    QString stringExpectedEndDate = QString::number(expectedEndDate.day()) + "/" +
-                                    QString::number(expectedEndDate.month()) + "/" +
-                                    QString::number(expectedEndDate.year());
+    QString stringExpectedEndDate;
+    if(expectedEndDate == QDate(1, 1, 1)){
+        stringExpectedEndDate = "-";
+    }
+    else{
+        stringExpectedEndDate = QString::number(expectedEndDate.day()) + "/" +
+                                        QString::number(expectedEndDate.month()) + "/" +
+                                        QString::number(expectedEndDate.year());
+    }
     ui->startDateLabel->setText(stringStartDate);
     ui->endDateLabel->setText(stringEndDate);
     ui->expectedEndDateLabel->setText(stringExpectedEndDate);
@@ -689,7 +693,7 @@ void ProjectsWindow::createProjectFromFile(const QString& path)
     }
 
     projects.push_back(std::move(project));
-    selectedProjectIt = projects.end() - 1;
+    //selectedProjectIt = projects.end() - 1;
     file.close();
 }
 
