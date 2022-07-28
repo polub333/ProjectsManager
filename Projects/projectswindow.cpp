@@ -9,6 +9,17 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui->subprojectsLayout->setAlignment(Qt::AlignTop);
     ui->projectsLayout->setAlignment(Qt::AlignTop);
 
+    scene1 = new Scene();
+    scene2 = new Scene();
+    ui->burndownGraphicsView->setScene(scene1);
+    ui->DailyGraphicsView->setScene(scene2);
+    scene1->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
+    scene2->addRect(0, 0, 196, 126, QPen(Qt::black), QBrush(Qt::NoBrush));
+    scene1->draw();
+
+    sceneWidth = 196-1;
+    sceneHeight = 126-1;
+
     currentDateTime = QDateTime::currentDateTime();
 
     connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
@@ -40,6 +51,8 @@ void ProjectsWindow::updateData()
     saveData();
     projects.clear();
     entries.clear();
+    scene1->clear();
+    scene1->deletePoints();
     readData();
 
     currentDateTime = QDateTime::currentDateTime();
@@ -228,6 +241,9 @@ void ProjectsWindow::calculateProjectDateAndWork(
     (*projectIt)->setWorkRemaining(workRemaining);
     (*projectIt)->setCurrentDailyWorkAmount(currentDailyWorkAmount);
     (*projectIt)->setRequiredDailyWorkAmount(requiredDailyWorkAmount);
+    scene1->clear();
+    scene1->deletePoints();
+    createDiagramPoints();
 }
 
 void ProjectsWindow::calculateProjectReward(
@@ -302,7 +318,6 @@ void ProjectsWindow::processEntry(
         qDebug()<<"No such project from entry projectName";
         return;
     }
-    qDebug()<<(*projectIt)->getWorkDone()<<(*entryIt)->getWorkAmount();
     (*projectIt)->addWorkDone((*entryIt)->getWorkAmount());
     QDateTime previousEntryDate, currentEntryDate;
     previousEntryDate.setDate((*projectIt)->getPreviousEntry());
@@ -320,6 +335,26 @@ void ProjectsWindow::processEntry(
     }
     (*projectIt)->setPreviousEntry(currentEntryDate.date());
     calculateProject(projectIt);
+}
+
+void ProjectsWindow::createDiagramPoints()
+{
+    int workAmount = (*selectedProjectIt)->getWorkAmount();
+    int workRemaining = workAmount;
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        if((*it)->getProjectName() == (*selectedProjectIt)->getName()){
+            QDateTime startDate, endDate, entryDate;
+            startDate.setDate((*selectedProjectIt)->getStartDate());
+            endDate.setDate((*selectedProjectIt)->getEndDate());
+            entryDate.setDate((*it)->getDate());
+            int projectDuration = startDate.daysTo(endDate) + 1;
+            int entryDuration = startDate.daysTo(entryDate) + 1;
+            workRemaining -= (*it)->getWorkAmount();
+            double x = (double) entryDuration / projectDuration * sceneWidth;
+            double y = sceneHeight - ((double) workRemaining / workAmount * sceneHeight);
+            scene1->addPoint(QPointF(x, y));
+        }
+    }
 }
 
 void ProjectsWindow::readEntries(const QString& path)
@@ -390,12 +425,19 @@ void ProjectsWindow::showProjects()
 
 void ProjectsWindow::showProjectInfo()
 {
+    showBurnDownDiagram();
     showCurrentDate();
     showProjectNameInfo();
     showProjectDateInfo();
     showProjectWorkInfo();
     showProjectRewardInfo();
     showProjectSubprojects();
+}
+
+void ProjectsWindow::showBurnDownDiagram()
+{
+    scene1->clear();
+    scene1->draw();
 }
 
 void ProjectsWindow::showCurrentDate()

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>550</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,22 +17,12 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>90</y>
+     <y>230</y>
      <width>411</width>
-     <height>331</height>
+     <height>191</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="mainLayout">
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QGraphicsView" name="burndownGraphicsView"/>
-      </item>
-      <item>
-       <widget class="QGraphicsView" name="DailyGraphicsView"/>
-      </item>
-     </layout>
-    </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -608,6 +598,42 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QGraphicsView" name="burndownGraphicsView">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>90</y>
+     <width>201</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="sceneRect">
+    <rectf>
+     <x>0.000000000000000</x>
+     <y>0.000000000000000</y>
+     <width>0.000000000000000</width>
+     <height>0.000000000000000</height>
+    </rectf>
+   </property>
+  </widget>
+  <widget class="QGraphicsView" name="DailyGraphicsView">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>90</y>
+     <width>201</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <property name="sceneRect">
+    <rectf>
+     <x>0.000000000000000</x>
+     <y>0.000000000000000</y>
+     <width>0.000000000000000</width>
+     <height>0.000000000000000</height>
+    </rectf>
+   </property>
   </widget>
  </widget>
  <resources/>

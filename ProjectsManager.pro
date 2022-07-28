@@ -12,6 +12,7 @@ SOURCES += \
     Projects/entry.cpp \
     Projects/project.cpp \
     Projects/projectswindow.cpp \
+    Projects/scene.cpp \
     Projects/subproject.cpp \
     main.cpp \
     mainwindow.cpp
@@ -20,6 +21,7 @@ HEADERS += \
     Projects/entry.h \
     Projects/project.h \
     Projects/projectswindow.h \
+    Projects/scene.h \
     Projects/subproject.h \
     mainwindow.h
 
