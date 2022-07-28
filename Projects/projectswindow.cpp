@@ -6,6 +6,9 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui(new Ui::ProjectsWindow)
 {
     ui->setupUi(this);
+    ui->subprojectsLayout->setAlignment(Qt::AlignTop);
+    ui->projectsLayout->setAlignment(Qt::AlignTop);
+
     currentDateTime = QDateTime::currentDateTime();
 
     connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
@@ -38,9 +41,6 @@ void ProjectsWindow::updateData()
     projects.clear();
     entries.clear();
     readData();
-    //createProjectFromFile("projects/project1.txt");
-    //createProjectFromFile("projects/project2.txt");
-    //readEntries("entries");
 
     currentDateTime = QDateTime::currentDateTime();
 
@@ -303,7 +303,6 @@ void ProjectsWindow::processEntry(
         return;
     }
     qDebug()<<(*projectIt)->getWorkDone()<<(*entryIt)->getWorkAmount();
-    //(*projectIt)->setWorkDone((*projectIt)->getWorkDone() + (*entryIt)->getWorkAmount());
     (*projectIt)->addWorkDone((*entryIt)->getWorkAmount());
     QDateTime previousEntryDate, currentEntryDate;
     previousEntryDate.setDate((*projectIt)->getPreviousEntry());

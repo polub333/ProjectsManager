@@ -410,17 +410,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>620</x>
-     <y>140</y>
-     <width>271</width>
-     <height>251</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="projectsLayout"/>
-  </widget>
   <widget class="QWidget" name="verticalLayoutWidget_3">
    <property name="geometry">
     <rect>
@@ -499,17 +488,6 @@
     <number>0</number>
    </property>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget_6">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>181</width>
-     <height>331</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" name="subprojectsLayout"/>
-  </widget>
   <widget class="QWidget" name="verticalLayoutWidget_7">
    <property name="geometry">
     <rect>
@@ -574,6 +552,62 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QScrollArea" name="scrollArea">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>181</width>
+     <height>331</height>
+    </rect>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>179</width>
+      <height>329</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_8">
+     <item>
+      <layout class="QVBoxLayout" name="subprojectsLayout"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QScrollArea" name="scrollArea_2">
+   <property name="geometry">
+    <rect>
+     <x>620</x>
+     <y>140</y>
+     <width>271</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="widgetResizable">
+    <bool>true</bool>
+   </property>
+   <widget class="QWidget" name="scrollAreaWidgetContents">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>269</width>
+      <height>249</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_7">
+     <item>
+      <layout class="QVBoxLayout" name="projectsLayout"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
  </widget>
  <resources/>
