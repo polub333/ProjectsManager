@@ -9,8 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Projects/burndowndiagramwindow.cpp \
     Projects/burndownscene.cpp \
     Projects/createprojectwindow.cpp \
+    Projects/dailyworkdiagramwindow.cpp \
     Projects/dailyworkscene.cpp \
     Projects/entry.cpp \
     Projects/project.cpp \
@@ -20,8 +22,10 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    Projects/burndowndiagramwindow.h \
     Projects/burndownscene.h \
     Projects/createprojectwindow.h \
+    Projects/dailyworkdiagramwindow.h \
     Projects/dailyworkscene.h \
     Projects/entry.h \
     Projects/project.h \
@@ -30,7 +34,9 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    Projects/burndowndiagramwindow.ui \
     Projects/createprojectwindow.ui \
+    Projects/dailyworkdiagramwindow.ui \
     Projects/projectswindow.ui \
     mainwindow.ui
 

@@ -19,6 +19,8 @@
 #include <Projects/burndownscene.h>
 #include <Projects/dailyworkscene.h>
 #include <Projects/createprojectwindow.h>
+#include <Projects/burndowndiagramwindow.h>
+#include <Projects/dailyworkdiagramwindow.h>
 
 namespace Ui {
 class ProjectsWindow;
@@ -36,6 +38,8 @@ private:
     Ui::ProjectsWindow *ui;
 
     CreateProjectWindow* createProjectWindow;
+    BurnDownDiagramWindow* burnDownDiagramWindow;
+    DailyWorkDiagramWindow* dailyWorkDiagramWindow;
 
     BurnDownScene* burnDownScene;
     int sceneWidth;
@@ -102,6 +106,8 @@ private slots:
     void addNewEntry();
     void mainMenuButtonClicked();
     void createNewProjectButtonClicked();
+    void showBurnDownDiagramButtonClicked();
+    void showDailyWorkDiagramButtonClicked();
     void saveData();
 
     void newProjectCreated();

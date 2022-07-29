@@ -10,6 +10,8 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui->projectsLayout->setAlignment(Qt::AlignTop);
 
     createProjectWindow = new CreateProjectWindow();
+    burnDownDiagramWindow = new BurnDownDiagramWindow();
+    dailyWorkDiagramWindow = new DailyWorkDiagramWindow();
 
     burnDownScene = new BurnDownScene();
     dailyWorkScene = new DailyWorkScene();
@@ -30,6 +32,10 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
     connect(createProjectWindow, SIGNAL(newProjectCreated()), this, SLOT(newProjectCreated()));
+    connect(ui->showBrunDownDiagramButton, SIGNAL(clicked()),
+            this, SLOT(showBurnDownDiagramButtonClicked()));
+    connect(ui->showDailyWorkDiagramButton, SIGNAL(clicked()),
+            this, SLOT(showDailyWorkDiagramButtonClicked()));
     readData();
     selectedProjectIt = projects.end();
 
@@ -42,6 +48,8 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 ProjectsWindow::~ProjectsWindow()
 {
     delete createProjectWindow;
+    delete burnDownDiagramWindow;
+    delete dailyWorkDiagramWindow;
     delete ui;
 }
 
@@ -164,6 +172,16 @@ std::set<QString> ProjectsWindow::getProjectsNames()
         projectsNames.insert((*it)->getName());
     }
     return projectsNames;
+}
+
+void ProjectsWindow::showBurnDownDiagramButtonClicked()
+{
+    burnDownDiagramWindow->show();
+}
+
+void ProjectsWindow::showDailyWorkDiagramButtonClicked()
+{
+    dailyWorkDiagramWindow->show();
 }
 
 void ProjectsWindow::createNewProjectButtonClicked()

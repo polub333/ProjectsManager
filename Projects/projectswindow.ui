@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>500</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>230</y>
+     <y>260</y>
      <width>411</width>
      <height>191</height>
     </rect>
@@ -549,7 +549,7 @@
      <x>10</x>
      <y>90</y>
      <width>181</width>
-     <height>331</height>
+     <height>361</height>
     </rect>
    </property>
    <property name="widgetResizable">
@@ -561,7 +561,7 @@
       <x>0</x>
       <y>0</y>
       <width>179</width>
-      <height>329</height>
+      <height>359</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -633,6 +633,32 @@
      <width>0.000000000000000</width>
      <height>0.000000000000000</height>
     </rectf>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="showBrunDownDiagramButton">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>230</y>
+     <width>201</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show Burn Down Diagram</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="showDailyWorkDiagramButton">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>230</y>
+     <width>201</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Show Daily Work Diagram</string>
    </property>
   </widget>
  </widget>
