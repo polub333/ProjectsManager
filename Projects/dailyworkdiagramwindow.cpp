@@ -7,7 +7,7 @@ DailyWorkDiagramWindow::DailyWorkDiagramWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    connect(ui->exitButton, SIGNAL(clicked()), this, SLOT([this](){this->hide;}));
+    connect(ui->exitButton, &QPushButton::clicked, this, [this](){this->hide();});
 }
 
 DailyWorkDiagramWindow::~DailyWorkDiagramWindow()

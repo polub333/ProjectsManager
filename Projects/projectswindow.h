@@ -94,6 +94,10 @@ private:
     void calculateProjectDateAndWork(std::vector<std::unique_ptr<Project>>::iterator projectIt);
     void calculateProjectReward(std::vector<std::unique_ptr<Project>>::iterator projectIt);
 
+    void setBurnDownDiagramInfo();
+    void setBurnDownDiagramEntries();
+    void setBurnDownDiagramProjectInfo();
+
     int checkAndSetProjectDaysGoneOrDaysRemaining(const int& days, const int& duration) const;
     int checkAndSetProjectWorkRemaining(const int& workRemaining) const;
     double checkAndSetProjectDailyWorkAmount(const int& work, const int& days) const;

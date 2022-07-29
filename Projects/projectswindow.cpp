@@ -176,7 +176,9 @@ std::set<QString> ProjectsWindow::getProjectsNames()
 
 void ProjectsWindow::showBurnDownDiagramButtonClicked()
 {
+    setBurnDownDiagramInfo();
     burnDownDiagramWindow->show();
+    burnDownDiagramWindow->draw();
 }
 
 void ProjectsWindow::showDailyWorkDiagramButtonClicked()
@@ -306,6 +308,29 @@ void ProjectsWindow::calculateProjectReward(
     double currentDailyReward =
             (double)(*projectIt)->getDailyReward() * (1 + currentChainMultiplier);
     (*projectIt)->setCurrentDailyReward(currentDailyReward);
+}
+
+void ProjectsWindow::setBurnDownDiagramInfo()
+{
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
+    setBurnDownDiagramProjectInfo();
+    setBurnDownDiagramEntries();
+}
+
+void ProjectsWindow::setBurnDownDiagramEntries()
+{
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        burnDownDiagramWindow->addEntry(*(*it));
+    }
+}
+
+void ProjectsWindow::setBurnDownDiagramProjectInfo()
+{
+    burnDownDiagramWindow->setStartDate((*selectedProjectIt)->getStartDate());
+    burnDownDiagramWindow->setEndDate((*selectedProjectIt)->getEndDate());
+    burnDownDiagramWindow->setWorkAmount((*selectedProjectIt)->getWorkAmount());
 }
 
 int ProjectsWindow::checkAndSetProjectDaysGoneOrDaysRemaining(
