@@ -29,6 +29,7 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
             this, SLOT(createNewProjectButtonClicked()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
+    connect(createProjectWindow, SIGNAL(newProjectCreated()), this, SLOT(newProjectCreated()));
     readData();
     selectedProjectIt = projects.end();
 
@@ -46,16 +47,34 @@ ProjectsWindow::~ProjectsWindow()
 
 void ProjectsWindow::updateData()
 {
-    QString currentSelectedProjectName = (*selectedProjectIt)->getName();
+    QString currentSelectedProjectName;
+    if(selectedProjectIt == projects.end()){
+        currentSelectedProjectName = "__END__";
+    }
+    else{
+        currentSelectedProjectName = (*selectedProjectIt)->getName();
+    }
+
+    qDebug()<<1;
     saveData();
+    qDebug()<<2;
     projects.clear();
     entries.clear();
     burnDownScene->clear();
     burnDownScene->deletePoints();
     dailyWorkScene->clear();
     dailyWorkScene->deletePoints();
+    qDebug()<<3;
+
     readData();
-    selectedProjectIt = findProjectByName(currentSelectedProjectName);
+    qDebug()<<4;
+
+    if(currentSelectedProjectName == "__END__"){
+        selectedProjectIt = projects.end();
+    }
+    else{
+        selectedProjectIt = findProjectByName(currentSelectedProjectName);
+    }
     currentDateTime = QDateTime::currentDateTime();
 
     processEntries(QDate(currentDateTime.date()));
@@ -145,10 +164,24 @@ void ProjectsWindow::mainMenuButtonClicked()
     emit openMainMenu();
 }
 
+std::set<QString> ProjectsWindow::getProjectsNames()
+{
+    std::set<QString> projectsNames;
+    for(auto it = projects.begin(); it != projects.end(); ++it){
+        projectsNames.insert((*it)->getName());
+    }
+    return projectsNames;
+}
+
 void ProjectsWindow::createNewProjectButtonClicked()
 {
-    createProjectWindow->init();
+    createProjectWindow->init(getProjectsNames());
     createProjectWindow->show();
+}
+
+void ProjectsWindow::newProjectCreated()
+{
+    updateData();
 }
 
 void ProjectsWindow::addNewEntry()
@@ -643,6 +676,8 @@ void ProjectsWindow::readProjects()
     for(std::filesystem::recursive_directory_iterator it("Projects"), end;it != end; ++it){
         if(it->path().extension() == ".txt"){
             createProjectFromFile(QString::fromStdString(it->path().string()));
+            qDebug()<<"READ:";
+            qDebug()<<QString::fromStdString(it->path().string());
         }
     }
 }

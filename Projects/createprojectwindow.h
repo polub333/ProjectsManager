@@ -5,6 +5,8 @@
 #include <QMessageBox>
 
 #include <vector>
+#include <set>
+#include <fstream>
 
 #include <Projects/subproject.h>
 
@@ -20,17 +22,19 @@ public:
     explicit CreateProjectWindow(QWidget *parent = nullptr);
     ~CreateProjectWindow();
 
-    void init();
+    void init(std::set<QString> _projectsNames);
 
 private:
     Ui::CreateProjectWindow *ui;
     std::vector<std::unique_ptr<Subproject>> subprojects;
     std::vector<std::unique_ptr<Subproject>>::iterator selectedSubprojectIt;
+    int countSubprojectsWorkAmount();
+
+    std::set<QString> projectsNames;
 
     void updateSubprojects();
     void selectSubproject(std::vector<std::unique_ptr<Subproject>>::iterator subprojectIt);
     void showSubprojectInfo();
-
 
     bool checkSubprojectData();
 
@@ -42,6 +46,8 @@ private slots:
     void newSubprojectButtonClicked();
     void okSubprojectButtonClicked();
     void deleteSubprojectButtonClicked();
+signals:
+    void newProjectCreated();
 };
 
 #endif // CREATEPROJECTWINDOW_H

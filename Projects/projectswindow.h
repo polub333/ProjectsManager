@@ -6,6 +6,7 @@
 #include <QStyle>
 
 #include <vector>
+#include <set>
 #include <algorithm>
 #include <memory>
 #include <fstream>
@@ -46,6 +47,7 @@ private:
     std::vector<std::unique_ptr<Project>> projects;
     std::vector<std::unique_ptr<Project>>::iterator selectedProjectIt;
     std::vector<std::unique_ptr<Project>>::iterator findProjectByName(const QString& name);
+    std::set<QString> getProjectsNames();
 
     std::vector<std::unique_ptr<Entry>> entries;
 
@@ -101,6 +103,8 @@ private slots:
     void mainMenuButtonClicked();
     void createNewProjectButtonClicked();
     void saveData();
+
+    void newProjectCreated();
 
 signals:
     void openMainMenu();
