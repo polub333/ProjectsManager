@@ -9,6 +9,8 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui->subprojectsLayout->setAlignment(Qt::AlignTop);
     ui->projectsLayout->setAlignment(Qt::AlignTop);
 
+    createProjectWindow = new CreateProjectWindow();
+
     burnDownScene = new BurnDownScene();
     dailyWorkScene = new DailyWorkScene();
     ui->burnDownGraphicsView->setScene(burnDownScene);
@@ -23,6 +25,8 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     currentDateTime = QDateTime::currentDateTime();
 
     connect(ui->mainMenuButton, SIGNAL(clicked()), this, SLOT(mainMenuButtonClicked()));
+    connect(ui->createNewProjectButton, SIGNAL(clicked()),
+            this, SLOT(createNewProjectButtonClicked()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(ui->submitEntryButton, SIGNAL(clicked()), this, SLOT(addNewEntry()));
     readData();
@@ -36,6 +40,7 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
 
 ProjectsWindow::~ProjectsWindow()
 {
+    delete createProjectWindow;
     delete ui;
 }
 
@@ -138,6 +143,12 @@ void ProjectsWindow::mainMenuButtonClicked()
 {
     hide();
     emit openMainMenu();
+}
+
+void ProjectsWindow::createNewProjectButtonClicked()
+{
+    createProjectWindow->init();
+    createProjectWindow->show();
 }
 
 void ProjectsWindow::addNewEntry()

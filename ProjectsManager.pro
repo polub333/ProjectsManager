@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     Projects/burndownscene.cpp \
+    Projects/createprojectwindow.cpp \
     Projects/dailyworkscene.cpp \
     Projects/entry.cpp \
     Projects/project.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
 
 HEADERS += \
     Projects/burndownscene.h \
+    Projects/createprojectwindow.h \
     Projects/dailyworkscene.h \
     Projects/entry.h \
     Projects/project.h \
@@ -28,6 +30,7 @@ HEADERS += \
     mainwindow.h
 
 FORMS += \
+    Projects/createprojectwindow.ui \
     Projects/projectswindow.ui \
     mainwindow.ui
 

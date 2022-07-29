@@ -17,6 +17,7 @@
 #include <Projects/entry.h>
 #include <Projects/burndownscene.h>
 #include <Projects/dailyworkscene.h>
+#include <Projects/createprojectwindow.h>
 
 namespace Ui {
 class ProjectsWindow;
@@ -32,6 +33,9 @@ public:
 
 private:
     Ui::ProjectsWindow *ui;
+
+    CreateProjectWindow* createProjectWindow;
+
     BurnDownScene* burnDownScene;
     int sceneWidth;
     int sceneHeight;
@@ -95,6 +99,7 @@ private:
 private slots:
     void addNewEntry();
     void mainMenuButtonClicked();
+    void createNewProjectButtonClicked();
     void saveData();
 
 signals:
