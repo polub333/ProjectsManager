@@ -125,28 +125,40 @@ void CreateProjectWindow::showSubprojectInfo()
     }
 }
 
-/*
+
 bool CreateProjectWindow::checkProjectData()
 {
     QString name = ui->nameLineEdit->text();
     QString description = ui->descriptionLineEdit->text();
 
-    int startDateDay = ui->startDateDayLineEdit->text().toInt();
-    int startDateMonth = ui->startDateMonthLineEdit->text().toInt();
-    int startDateYear = ui->startDateYearLineEdit->text().toInt();
-    int endDateDay = ui->endDateDayLineEdit->text().toInt();
-    int endDateMonth = ui->endDateMonthLineEdit->text().toInt();
-    int endDateYear = ui->endDateYearLineEdit->text().toInt();
+    bool *ok1 = new bool, *ok2 = new bool, *ok3 = new bool, *ok4 = new bool, *ok5 = new bool,
+         *ok6 = new bool, *ok7 = new bool, *ok8 = new bool, *ok9 = new bool, *ok10 = new bool;
 
-    int workAmount = ui->workAmountLineEdit->text().toInt();
-    double dailyReward = ui->dailyRewardLineEdit->text().toDouble();
-    double chainMultiplier = ui->chainMultiplierLineEdit->text().toDouble();
-    double maxDailyReward = ui->maxRewardLineEdit->text().toDouble();
+    int startDateDay = ui->startDateDayLineEdit->text().toInt(ok1);
+    int startDateMonth = ui->startDateMonthLineEdit->text().toInt(ok2);
+    int startDateYear = ui->startDateYearLineEdit->text().toInt(ok3);
+    int endDateDay = ui->endDateDayLineEdit->text().toInt(ok4);
+    int endDateMonth = ui->endDateMonthLineEdit->text().toInt(ok5);
+    int endDateYear = ui->endDateYearLineEdit->text().toInt(ok6);
+
+    int workAmount = ui->workAmountLineEdit->text().toInt(ok7);
+    double dailyReward = ui->dailyRewardLineEdit->text().toDouble(ok8);
+    double chainMultiplier = ui->chainMultiplierLineEdit->text().toDouble(ok9);
+    double maxDailyReward = ui->maxRewardLineEdit->text().toDouble(ok10);
+
+    QDateTime startDate, endDate;
+    startDate.setDate(QDate(startDateYear, startDateMonth, startDateDay));
+    endDate.setDate(QDate(endDateYear, endDateMonth, endDateDay));
 
     QMessageBox msg(QMessageBox::Critical, "Invalid Data",
                     "Some of entered data is invalid:\n", QMessageBox::Ok);
     bool aborted = false;
 
+    if(name == "" || description == "" || !(*ok1) || !(*ok2) || !(*ok3) || !(*ok4) || !(*ok5) ||
+       !(*ok6) || !(*ok7) || !(*ok8) || !(*ok9) || !(*ok10)){
+        msg.setText(msg.text() + "Fields cannot be empty and data fields must be valid\n");
+        aborted = true;
+    }
     if(projectsNames.find(name) != projectsNames.end()){
         msg.setText(msg.text() + "Project with such name already exists\n");
         aborted = true;
@@ -157,6 +169,10 @@ bool CreateProjectWindow::checkProjectData()
     }
     if(!QDate::isValid(endDateYear, endDateMonth, endDateDay)){
         msg.setText(msg.text() + "Invalid end date\n");
+        aborted = true;
+    }
+    if(endDate < startDate){
+        msg.setText(msg.text() + "End date cannot be less than start date\n");
         aborted = true;
     }
     if(workAmount <= 0){
@@ -179,7 +195,7 @@ bool CreateProjectWindow::checkProjectData()
     }
     return true;
 }
-*/
+
 
 bool CreateProjectWindow::checkSubprojectData()
 {
@@ -210,71 +226,36 @@ void CreateProjectWindow::submitButtonClicked()
     double chainMultiplier = ui->chainMultiplierLineEdit->text().toDouble();
     double maxDailyReward = ui->maxRewardLineEdit->text().toDouble();
 
-    QMessageBox msg(QMessageBox::Critical, "Invalid Data",
-                    "Some of entered data is invalid:\n", QMessageBox::Ok);
-    bool aborted = false;
-
-    if(name == ""){
-        msg.setText(msg.text() + "Project name cannot be empty\n");
-        aborted = true;
-    }
-    if(projectsNames.find(name) != projectsNames.end()){
-        msg.setText(msg.text() + "Project with such name already exists\n");
-        aborted = true;
-    }
-    if(!QDate::isValid(startDateYear, startDateMonth, startDateDay)){
-        msg.setText(msg.text() + "Invalid start date\n");
-        aborted = true;
-    }
-    if(!QDate::isValid(endDateYear, endDateMonth, endDateDay)){
-        msg.setText(msg.text() + "Invalid end date\n");
-        aborted = true;
-    }
-    if(workAmount <= 0){
-        msg.setText(msg.text() + "Work amount couldn't be less than 1\n");
-        aborted = true;
-    }
-    if(maxDailyReward < dailyReward){
-        msg.setText(msg.text() + "Maximal daily reward couldn't be less than daily reward\n");
-        aborted = true;
-    }
-    if(countSubprojectsWorkAmount() != workAmount && subprojects.size() != 0){
-        msg.setText(msg.text() + "Sum of work amounts of subprojects must be equal to " +
-                                 "project's work amount\n");
-        aborted = true;
+    if(!checkProjectData()){
+        return;
     }
 
-    if(aborted){
-        msg.exec();
-    }
-    else{
-        QString path = "Projects/" + name + ".txt";
-        std::fstream file(path.toStdString(), std::ios_base::out);
-        file<<name.toStdString()<<std::endl;
-        file<<description.toStdString()<<std::endl;
-        file<<startDateDay<<std::endl;
-        file<<startDateMonth<<std::endl;
-        file<<startDateYear<<std::endl;
-        file<<endDateDay<<std::endl;
-        file<<endDateMonth<<std::endl;
-        file<<endDateYear<<std::endl;
+    QString path = "Projects/" + name + ".txt";
+    std::fstream file(path.toStdString(), std::ios_base::out);
+    file<<name.toStdString()<<std::endl;
+    file<<description.toStdString()<<std::endl;
+    file<<startDateDay<<std::endl;
+    file<<startDateMonth<<std::endl;
+    file<<startDateYear<<std::endl;
+    file<<endDateDay<<std::endl;
+    file<<endDateMonth<<std::endl;
+    file<<endDateYear<<std::endl;
+    file<<workAmount<<std::endl;
+    file<<dailyReward<<std::endl;
+    file<<chainMultiplier<<std::endl;
+    file<<maxDailyReward<<std::endl;
+    file<<subprojects.size()<<std::endl;
+    for(auto it = subprojects.begin(); it != subprojects.end(); ++it){
+        file<<(*it)->getName().toStdString()<<std::endl;
+        QDate date = (*it)->getDate();
+        file<<date.day()<<std::endl;
+        file<<date.month()<<std::endl;
+        file<<date.year()<<std::endl;
         file<<workAmount<<std::endl;
-        file<<dailyReward<<std::endl;
-        file<<chainMultiplier<<std::endl;
-        file<<maxDailyReward<<std::endl;
-        file<<subprojects.size()<<std::endl;
-        for(auto it = subprojects.begin(); it != subprojects.end(); ++it){
-            file<<(*it)->getName().toStdString()<<std::endl;
-            QDate date = (*it)->getDate();
-            file<<date.day()<<std::endl;
-            file<<date.month()<<std::endl;
-            file<<date.year()<<std::endl;
-            file<<workAmount<<std::endl;
-        }
-        file.close();
-        emit newProjectCreated();
-        hide();
     }
+    file.close();
+    emit newProjectCreated();
+    hide();
 }
 
 void CreateProjectWindow::cancelButtonClicked()

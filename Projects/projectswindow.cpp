@@ -54,21 +54,14 @@ void ProjectsWindow::updateData()
     else{
         currentSelectedProjectName = (*selectedProjectIt)->getName();
     }
-
-    qDebug()<<1;
     saveData();
-    qDebug()<<2;
     projects.clear();
     entries.clear();
     burnDownScene->clear();
     burnDownScene->deletePoints();
     dailyWorkScene->clear();
     dailyWorkScene->deletePoints();
-    qDebug()<<3;
-
     readData();
-    qDebug()<<4;
-
     if(currentSelectedProjectName == "__END__"){
         selectedProjectIt = projects.end();
     }
@@ -676,8 +669,6 @@ void ProjectsWindow::readProjects()
     for(std::filesystem::recursive_directory_iterator it("Projects"), end;it != end; ++it){
         if(it->path().extension() == ".txt"){
             createProjectFromFile(QString::fromStdString(it->path().string()));
-            qDebug()<<"READ:";
-            qDebug()<<QString::fromStdString(it->path().string());
         }
     }
 }

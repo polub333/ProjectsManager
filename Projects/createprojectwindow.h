@@ -36,6 +36,7 @@ private:
     void selectSubproject(std::vector<std::unique_ptr<Subproject>>::iterator subprojectIt);
     void showSubprojectInfo();
 
+    bool checkProjectData();
     bool checkSubprojectData();
 
     void clearLayout(QLayout* layout);
