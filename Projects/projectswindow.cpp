@@ -176,6 +176,10 @@ std::set<QString> ProjectsWindow::getProjectsNames()
 
 void ProjectsWindow::showBurnDownDiagramButtonClicked()
 {
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
+    burnDownDiagramWindow->clear();
     setBurnDownDiagramInfo();
     burnDownDiagramWindow->show();
     burnDownDiagramWindow->draw();
@@ -322,7 +326,9 @@ void ProjectsWindow::setBurnDownDiagramInfo()
 void ProjectsWindow::setBurnDownDiagramEntries()
 {
     for(auto it = entries.begin(); it != entries.end(); ++it){
-        burnDownDiagramWindow->addEntry(*(*it));
+        if((*it)->getProjectName() == (*selectedProjectIt)->getName()){
+            burnDownDiagramWindow->addEntry(*(*it));
+        }
     }
 }
 

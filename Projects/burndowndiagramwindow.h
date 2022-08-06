@@ -2,6 +2,8 @@
 #define BURNDOWNDIAGRAMWINDOW_H
 
 #include <QWidget>
+#include <QGraphicsScene>
+#include <QGraphicsTextItem>
 
 #include <vector>
 
@@ -24,9 +26,20 @@ public:
     void setEndDate(const QDate& _endDate);
     void setWorkAmount(const int& _workAmount);
     void draw();
+    void clear();
 
 private:
     Ui::BurnDownDiagramWindow *ui;
+
+    QGraphicsScene* scene;
+    int pixelPerDay;
+    int sceneHeight;
+    int sceneWidth;
+    QColor linesColor;
+    QColor dotsColor;
+    int dotRadius;
+    QPointF previousDotPos;
+
     std::vector<Entry> entries;
     QDate startDate;
     QDate endDate;
