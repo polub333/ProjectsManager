@@ -98,6 +98,10 @@ private:
     void setBurnDownDiagramEntries();
     void setBurnDownDiagramProjectInfo();
 
+    void setDailyWorkDiagramInfo();
+    void setDailyWorkDiagramEntries();
+    void setDailyWorkDiagramProjectInfo();
+
     int checkAndSetProjectDaysGoneOrDaysRemaining(const int& days, const int& duration) const;
     int checkAndSetProjectWorkRemaining(const int& workRemaining) const;
     double checkAndSetProjectDailyWorkAmount(const int& work, const int& days) const;

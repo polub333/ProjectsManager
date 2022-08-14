@@ -187,7 +187,13 @@ void ProjectsWindow::showBurnDownDiagramButtonClicked()
 
 void ProjectsWindow::showDailyWorkDiagramButtonClicked()
 {
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
+    dailyWorkDiagramWindow->clear();
+    setDailyWorkDiagramInfo();
     dailyWorkDiagramWindow->show();
+    dailyWorkDiagramWindow->draw();
 }
 
 void ProjectsWindow::createNewProjectButtonClicked()
@@ -337,6 +343,30 @@ void ProjectsWindow::setBurnDownDiagramProjectInfo()
     burnDownDiagramWindow->setStartDate((*selectedProjectIt)->getStartDate());
     burnDownDiagramWindow->setEndDate((*selectedProjectIt)->getEndDate());
     burnDownDiagramWindow->setWorkAmount((*selectedProjectIt)->getWorkAmount());
+}
+
+void ProjectsWindow::setDailyWorkDiagramInfo()
+{
+    if(selectedProjectIt == projects.end()){
+        return;
+    }
+    setDailyWorkDiagramProjectInfo();
+    setDailyWorkDiagramEntries();
+}
+
+void ProjectsWindow::setDailyWorkDiagramProjectInfo()
+{
+    dailyWorkDiagramWindow->setStartDate((*selectedProjectIt)->getStartDate());
+    dailyWorkDiagramWindow->setEndDate((*selectedProjectIt)->getEndDate());
+}
+
+void ProjectsWindow::setDailyWorkDiagramEntries()
+{
+    for(auto it = entries.begin(); it != entries.end(); ++it){
+        if((*it)->getProjectName() == (*selectedProjectIt)->getName()){
+            dailyWorkDiagramWindow->addEntry(*(*it));
+        }
+    }
 }
 
 int ProjectsWindow::checkAndSetProjectDaysGoneOrDaysRemaining(

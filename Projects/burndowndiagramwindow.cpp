@@ -48,6 +48,15 @@ void BurnDownDiagramWindow::setWorkAmount(const int& _workAmount)
 void BurnDownDiagramWindow::draw()
 {
     scene->clear();
+
+    QDateTime startDateTime, endDateTime;
+    startDateTime.setDate(startDate);
+    endDateTime.setDate(endDate);
+    int duration = startDateTime.daysTo(endDateTime) + 1;
+    sceneWidth = duration * pixelPerDay;
+
+    ui->graphicsView->setSceneRect(-sceneWidth / 2, -sceneHeight / 2,
+                                   sceneWidth, sceneHeight);
     drawBurnDownLine();
     drawPercentLines();
     drawDateLines();
