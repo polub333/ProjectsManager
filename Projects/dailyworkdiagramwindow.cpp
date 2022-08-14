@@ -15,8 +15,6 @@ DailyWorkDiagramWindow::DailyWorkDiagramWindow(QWidget *parent) :
     sceneHeight = 380 - 25;
     columnsColor = QColor(175, 238, 238);
     linesColor = QColor(192, 192, 192);
-
-    connect(ui->exitButton, &QPushButton::clicked, this, [this](){this->hide();});
 }
 
 DailyWorkDiagramWindow::~DailyWorkDiagramWindow()

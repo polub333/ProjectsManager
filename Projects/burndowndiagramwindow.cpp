@@ -16,8 +16,6 @@ BurnDownDiagramWindow::BurnDownDiagramWindow(QWidget *parent) :
     linesColor = QColor(192, 192, 192);
     dotsColor = QColor(255, 102, 0);
     dotRadius = 3;
-
-    connect(ui->exitButton, &QPushButton::clicked, this, [this](){this->hide();});
 }
 
 BurnDownDiagramWindow::~BurnDownDiagramWindow()
