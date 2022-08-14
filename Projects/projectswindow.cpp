@@ -6,6 +6,8 @@ ProjectsWindow::ProjectsWindow(QWidget *parent) :
     ui(new Ui::ProjectsWindow)
 {
     ui->setupUi(this);
+
+    setWindowTitle("Projects Window");
     ui->subprojectsLayout->setAlignment(Qt::AlignTop);
     ui->projectsLayout->setAlignment(Qt::AlignTop);
 

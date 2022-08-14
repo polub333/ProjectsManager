@@ -6,6 +6,8 @@ DailyWorkDiagramWindow::DailyWorkDiagramWindow(QWidget *parent) :
     ui(new Ui::DailyWorkDiagramWindow)
 {
     ui->setupUi(this);
+
+    setWindowTitle("Daily Work Diagram");
     scene = new QGraphicsScene;
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);

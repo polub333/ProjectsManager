@@ -7,6 +7,7 @@ CreateProjectWindow::CreateProjectWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle("Create Project");
     ui->subprojectsLayout->setAlignment(Qt::AlignTop);
 
     connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(submitButtonClicked()));
@@ -154,7 +155,7 @@ bool CreateProjectWindow::checkProjectData()
                     "Some of entered data is invalid:\n", QMessageBox::Ok);
     bool aborted = false;
 
-    if(name == "" || description == "" || !(*ok1) || !(*ok2) || !(*ok3) || !(*ok4) || !(*ok5) ||
+    if(name == "" || description == "" || !(*ok1) || !(*ok2) || !(*ok3) || !(*ok4) ||!(*ok5) ||
        !(*ok6) || !(*ok7) || !(*ok8) || !(*ok9) || !(*ok10)){
         msg.setText(msg.text() + "Fields cannot be empty and data fields must be valid\n");
         aborted = true;

@@ -6,6 +6,8 @@ BurnDownDiagramWindow::BurnDownDiagramWindow(QWidget *parent) :
     ui(new Ui::BurnDownDiagramWindow)
 {
     ui->setupUi(this);
+
+    setWindowTitle("Burn Down Diagram");
     scene = new QGraphicsScene;
     ui->graphicsView->setScene(scene);
 
