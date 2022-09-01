@@ -252,7 +252,7 @@ void CreateProjectWindow::submitButtonClicked()
         file<<date.day()<<std::endl;
         file<<date.month()<<std::endl;
         file<<date.year()<<std::endl;
-        file<<workAmount<<std::endl;
+        file<<(*it)->getWorkAmount()<<std::endl;
     }
     file.close();
     emit newProjectCreated();
